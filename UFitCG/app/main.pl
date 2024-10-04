@@ -3,5 +3,5 @@
 :- ['../src/usuario'].
 
 main :-
-    menuInicial,
+    mostrarUsuariosTipo("AD "),
     halt.
