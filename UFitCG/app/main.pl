@@ -1,9 +1,6 @@
 % Carrega o arquivo da tela inicial
 :- ['../src/navegabilidade'].
-
-% Função principal que chama a tela inicial
-:- initialization(main).
+:- ['../src/usuario'].
 
 main :-
-    menuInicial,
-    halt.
+    cadastraUsuario("Eurico", 12345678, "ADM", "Renaldo França", "20/10/2003", "  ", 1500).
