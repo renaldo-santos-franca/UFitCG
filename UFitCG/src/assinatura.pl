@@ -13,7 +13,7 @@ cadastraAssinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso) :-
 
 insertAssinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso):-
     assertz(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso)),
-    open('data/dataBase.pl', append, Stream), 
+    open('data/assinatura_db.pl', append, Stream), 
     format(Stream, 'assinatura("~w", ~w, ~w, ~w, ~w, ~w, "~w").~n', [Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso]),
     close(Stream).
 
@@ -27,7 +27,7 @@ removeAssinatura(Sigla) :-
     ).
 
 verificaExistenciaAssinatura(Sigla) :-
-    consult('data/dataBase.pl'),
+    consult('data/assinatura_db.pl'),
     assinatura(Sigla, _, _, _, _, _, _).
 
 mostrarAssinaturaTipo(Sigla):-
@@ -43,7 +43,7 @@ mostrarAssinaturaTipo(Sigla):-
     ); write('Tipo de Assinatura Inexistente!'), nl).
 
 mostrarAssinaturas:- 
-    consult('data/dataBase.pl'),
+    consult('data/assinatura_db.pl'),
     findall(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), Assinaturas),
     (Assinaturas \= [] -> mostrarListaAssinaturas(Assinaturas)
     ; write('Nenhuma assinatura encontrada!'), nl).
@@ -62,14 +62,7 @@ mostrarListaAssinaturas([assinatura(Sigla, Mensal, Semestral, Anual, Desconto, A
 
 
 atualizaBaseDeDados :-
-    open('data/dataBase.pl', write, Stream),
-    
-    findall(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario),
-            usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), 
-            Usuarios),
-    forall(member(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), Usuarios),
-           format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', 
-                  [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario])),
+    open('data/assinatura_db.pl', write, Stream),
     findall(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso),
             assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), 
             Assinaturas),

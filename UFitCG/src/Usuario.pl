@@ -22,16 +22,16 @@ cadastraUsuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Sa
 
 insertUser(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario):-
     assertz(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario)),
-    open('data/dataBase.pl', append, Stream), 
+    open('data/usuario_db.pl', append, Stream), 
     format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario]),
     close(Stream). 
 
 verificaExistenciaUsuario(Usr):-
-    consult('data/dataBase.pl'),
+    consult('data/usuario_db.pl'),
     usuario(Usr, _, _, _, _, _, _).
 
 temAssinatura(Sigla) :-
-    consult('data/dataBase.pl'),
+    consult('data/assinatura_db.pl'),
     assinatura(Sigla, _, _, _, _, _, _).
 
 removeUsuario(Usr) :-
@@ -59,7 +59,7 @@ mostrarPerfil(Usr):-
     ) ; write('Usuario Inexistente!'), nl).
 
 mostrarUsuarios :- 
-    consult('data/dataBase.pl'),
+    consult('data/usuario_db.pl'),
     findall(usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), Usuarios),
     (Usuarios \= [] -> mostrarListaUsuarios(Usuarios)
     ; write('Nenhum usuario encontrado!'), nl).
@@ -75,13 +75,13 @@ mostrarListaUsuarios([usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinat
     mostrarListaUsuarios(Resto).
 
 mostrarUsuariosTipo(TipoUsr) :-
-    consult('data/dataBase.pl'),
+    consult('data/usuario_db.pl'),
     findall(usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), Usuarios),
     (Usuarios \= [] -> mostrarListaUsuarios(Usuarios)
     ; write('Nenhum usuario encontrado para o tipo especificado!'), nl).
 
 atualizaBaseDeDados :-
-    open('data/dataBase.pl', write, Stream),
+    open('data/usuario_db.pl', write, Stream),
     
     findall(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario),
             usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), 
@@ -89,11 +89,4 @@ atualizaBaseDeDados :-
     forall(member(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), Usuarios),
            format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', 
                   [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario])),
-
-    findall(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso),
-            assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), 
-            Assinaturas),
-    forall(member(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), Assinaturas),
-           format(Stream, 'assinatura("~w", ~w, ~w, ~w, ~w, ~w, "~w").~n', 
-                  [Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso])),
     close(Stream).

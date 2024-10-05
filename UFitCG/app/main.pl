@@ -4,5 +4,5 @@
 :- ['../src/assinatura'].
 
 main :-
-    mostrarAssinaturas,
+    menuInicial,
     halt.
