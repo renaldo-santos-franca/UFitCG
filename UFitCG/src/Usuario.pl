@@ -1,5 +1,6 @@
 :- module(usuario, [cadastraUsuario/7, removeUsuario/1, mostrarPerfil/1, mostrarUsuariosTipo/1, mostrarUsuarios/0]).
 :- dynamic usuario/7.
+:- dynamic assinatura/7.
 
 cadastraUsuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario) :-
     (verificaExistenciaUsuario(Usr) -> write('Usuario Existente!'), nl
@@ -12,8 +13,10 @@ cadastraUsuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Sa
         write('Usuario Cadastrado Com Sucesso!'), nl) 
         ; 
       Tipo_usr = "CLI" -> 
-        ((insertUser(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, 0),
-        write('Usuario Cadastrado Com Sucesso!'), nl))
+        (temAssinatura(Tipo_assinatura) -> 
+            ((insertUser(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, 0),
+            write('Usuario Cadastrado Com Sucesso!'), nl))
+            ; write('Tipo de Assinatura Inválida!'), nl)
         ; write('Tipo de Usuario Invalido!'), nl
     ).
 
@@ -23,10 +26,13 @@ insertUser(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario
     format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario]),
     close(Stream). 
 
-
 verificaExistenciaUsuario(Usr):-
     consult('data/dataBase.pl'),
     usuario(Usr, _, _, _, _, _, _).
+
+temAssinatura(Sigla) :-
+    consult('data/dataBase.pl'),
+    assinatura(Sigla, _, _, _, _, _, _).
 
 removeUsuario(Usr) :-
     (verificaExistenciaUsuario(Usr) ->
@@ -36,15 +42,6 @@ removeUsuario(Usr) :-
     ; 
         write('Usuário não encontrado!'), nl
     ).
-
-atualizaBaseDeDados :-
-    open('data/dataBase.pl', write, Stream), % Reabre o arquivo para sobrescrever
-    findall(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario),
-            usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), 
-            Usuarios),
-    forall(member(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), Usuarios),
-           format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario])),
-    close(Stream).
 
 mostrarPerfil(Usr):- 
     (verificaExistenciaUsuario(Usr) -> (
@@ -77,12 +74,26 @@ mostrarListaUsuarios([usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinat
     nl,
     mostrarListaUsuarios(Resto).
 
-% Função para mostrar usuários por tipo
 mostrarUsuariosTipo(TipoUsr) :-
     consult('data/dataBase.pl'),
     findall(usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), Usuarios),
     (Usuarios \= [] -> mostrarListaUsuarios(Usuarios)
     ; write('Nenhum usuario encontrado para o tipo especificado!'), nl).
 
-% Faltam:
-% Parte relaciona a Assinatura
+atualizaBaseDeDados :-
+    open('data/dataBase.pl', write, Stream),
+    
+    findall(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario),
+            usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), 
+            Usuarios),
+    forall(member(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), Usuarios),
+           format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', 
+                  [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario])),
+
+    findall(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso),
+            assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), 
+            Assinaturas),
+    forall(member(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), Assinaturas),
+           format(Stream, 'assinatura("~w", ~w, ~w, ~w, ~w, ~w, "~w").~n', 
+                  [Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso])),
+    close(Stream).
