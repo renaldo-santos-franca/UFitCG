@@ -1,4 +1,4 @@
-:- module(usuario, [cadastraUsuario/7, removeUsuario/1, mostrarPerfil/1, mostrarUsuariosTipo/1, mostrarUsuarios/0]).
+:- module(usuario, [cadastraUsuario/7, removeUsuario/1, mostrarPerfil/1, mostrarUsuariosTipo/1, mostrarUsuarios/0, verificaExistenciaUsuario/1]).
 :- dynamic usuario/7.
 :- dynamic assinatura/7.
 

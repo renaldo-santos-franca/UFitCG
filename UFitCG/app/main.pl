@@ -1,8 +1,9 @@
 % Carrega o arquivo da tela inicial
 :- ['../src/navegabilidade'].
-:- ['../src/usuario'].
+:- ['../src/Usuario'].
 :- ['../src/assinatura'].
+:- ['../src/fichaTreino'].
 
 main :-
-    menuInicial,
+    cadastraFicha("Usr_cli", "Usr_per", "Exercicios", "Observacoes"),
     halt.

@@ -381,7 +381,7 @@ acaoMenuTreinoPer("1", Usr) :-
     writeln("Observacoes: "),
     read_line_to_codes(user_input, ObservacoesCodes),
     string_to_atom(ObservacoesCodes, Observacoes),
-    cadastraFicha(Usr_cli, Exercicios, Observacoes),
+    cadastraFicha(Usr_cli, Usr, Exercicios, Observacoes),
     espera,
     menuTreinoPer(Usr).
 
