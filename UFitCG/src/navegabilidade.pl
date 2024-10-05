@@ -1,5 +1,5 @@
 :- module(navegabilidade, [menuInicial/0]).
-
+:- use_module(login).
 clear_screen :- write('\e[H\e[2J').
 
 menuInicial :-

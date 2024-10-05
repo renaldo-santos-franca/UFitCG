@@ -4,6 +4,7 @@
 :- ['../src/avaliacaoFisica'].
 :- ['../src/fichaTreino'].
 :- ['../src/aulaCliente'].
+:- ['../src/login'].
 
 main :-
     menuInicial,

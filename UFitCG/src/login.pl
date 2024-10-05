@@ -13,19 +13,20 @@ login(User, Senha, Result) :-
     ).
 
 veri_usuario(User, Senha, Tipo) :-
-    consult('data/dataBase.pl'),
     usuario(User, Senha, Tipo, _, _, _, _).
 
 verifica_dados_login(User, Senha, VeriDados) :-
-    consult('data/dataBase.pl'),
-    (   usuario(User, Senha, _, _, _, _, _)
-    ->  VeriDados = true
+    (   exists_file('../data/usuario_db.pl')
+    ->  consult('../data/usuario_db.pl'),
+        (   usuario(User, Senha, _, _, _, _, _)
+        ->  VeriDados = true
+        ;   VeriDados = false
+        )
     ;   VeriDados = false
     ).
 
 verifica_horario(User, VeriHorario) :-
-    consult('data/dataBase.pl'),
-    usuario(User, _, _, _, _, _, TipoAssinatura),
+    usuario(User, _, _, _, _, TipoAssinatura, _),
     get_time(CurrentTime),
     stamp_date_time(CurrentTime, DateTime, local),
     date_time_value(hour, DateTime, Hour),
