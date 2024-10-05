@@ -42,7 +42,6 @@ incrementa_id_aula :-
 atualiza_arquivo_aula_db(NovoId) :-
     open('data/aula_db.pl', write, Stream),
     format(Stream, ':- dynamic(id_aula/1).~n', []),
-    format(Stream, ':- dynamic(aula/5).~n', []),
     format(Stream, 'id_aula(~w).~n', [NovoId]),
     close(Stream),
     open('data/aula_db.pl', append, StreamAula),
@@ -52,10 +51,19 @@ atualiza_arquivo_aula_db(NovoId) :-
 
 listar_aulas :-
     consult('data/aula_db.pl'),
-    (aula(_, _, _, _, _) ->
-    forall((aula(Id, Materia, Usr_per, Data_horario, Limite), Id \= -1),
-    format(' ID: ~w~n Matéria: ~w~n Usuário: ~w~n Data/Horário: ~w~n Limite: ~w~n~n', [Id, Materia, Usr_per, Data_horario, Limite]))
+    findall(aula(Id, Materia, Usr_per, Data_horario, Limite), aula(Id, Materia, Usr_per, Data_horario, Limite), Aulas),
+    (Aulas \= [] -> mostrarListaAulas(Aulas)
+    ; writeln('Nenhuma Aula Cadastrada')
     ).
+
+mostrarListaAulas([]).
+mostrarListaAulas([aula(Id, Materia, Usr, Data_horario, Limite) | T]) :-
+    write('ID: '), writeln(Id),
+    write('Materia: '), writeln(Materia),
+    write('Usuario: '), writeln(Usr),
+    write('Data-Horario: '), writeln(Data_horario),
+    write('Limite: '). writeln(Limite),
+    mostrarListaAulas(T).
 
 
 listarAulasPersonal(Usr) :-
@@ -63,7 +71,7 @@ listarAulasPersonal(Usr) :-
     (   aula(_, _, Usr, _, _) -> 
         forall((aula(Id, Materia, Usr, Data_horario, Limite), Id \= -1),
                format(' ID: ~w~n Matéria: ~w~n Usuário: ~w~n Data/Horário: ~w~n Limite: ~w~n~n', [Id, Materia, Usr, Data_horario, Limite]))
-    ;   writeln('Nenhuma aula cadastrada.')
+    ;   writeln('Nenhuma Aula Cadastrada')
     ).
 
 remover_aula(Id_str) :-
@@ -79,7 +87,6 @@ remover_aula(Id_str) :-
 atualizar_arquivo_aula_db :-
     open('data/aula_db.pl', write, Stream),
     format(Stream, ':- dynamic(id_aula/1).~n', []),
-    format(Stream, ':- dynamic(aula/5).~n', []),
     forall(id_aula(Id), format(Stream, 'id_aula(~w).~n', [Id])),
     forall(aula(IdAula, Materia, Usr_per, Data_horario, Limite), format(Stream, 'aula(~w, "~w", "~w", "~w", ~w).~n', [IdAula, Materia, Usr_per, Data_horario, Limite])),
     close(Stream).
