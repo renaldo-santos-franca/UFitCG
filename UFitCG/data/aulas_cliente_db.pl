@@ -1,0 +1,1 @@
+:- dynamic(aulaCli/2).

@@ -3,6 +3,7 @@
 :- ['../src/assinatura'].
 :- ['../src/avaliacaoFisica'].
 :- ['../src/fichaTreino'].
+:- ['../src/aulaCliente'].
 
 main :-
     menuInicial,

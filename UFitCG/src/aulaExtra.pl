@@ -62,7 +62,7 @@ mostrarListaAulas([aula(Id, Materia, Usr, Data_horario, Limite) | T]) :-
     write('Materia: '), writeln(Materia),
     write('Usuario: '), writeln(Usr),
     write('Data-Horario: '), writeln(Data_horario),
-    write('Limite: '). writeln(Limite),
+    write('Limite: '). writeln(Limite), nl,
     mostrarListaAulas(T).
 
 
