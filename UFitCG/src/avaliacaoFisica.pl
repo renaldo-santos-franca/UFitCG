@@ -7,7 +7,7 @@ cadastraAvaliacao(Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava):-
         string_length(Data_ava, L), L =\= 10 -> (write('Data Invalida!'), nl) ; (
             pegaId(Id),
             insertAssinatura(Id, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava),
-            write('Avaliacao Adicionada!'), nl
+            write('Avaliacao Adicionada com Sucesso!'), nl
         )
     ).
 
