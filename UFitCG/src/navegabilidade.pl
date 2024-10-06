@@ -7,7 +7,7 @@ menuInicial :-
     clear_screen,
     writeln("|------------------------------|\n|      Bem vindo à UFitCG      |\n|                              |\n|    Tecle ENTER para Login    |\n|      Digite - para Sair      |\n|------------------------------|\n"),
     read_line_to_codes(user_input, InputCodes),
-    string_to_atom(InputCodes, Input),
+    string_codes(Input, InputCodes),
     acaoTelaInicial(Input),
     clear_screen.
 
@@ -19,30 +19,26 @@ abalogin :-
     writeln("LOGIN"),
     write("Usuário: "),
     read_line_to_codes(user_input, X3),
-    string_to_atom(X3,X2),
-    atom_string(X2,Usr),
+    string_codes(Usr,X3),
     write("Senha: "),
     read_line_to_codes(user_input, Y3),
-    string_to_atom(Y3,Y2),
-    atom_string(Y2,Senha),
+    string_codes(Senha, Y3),
     clear_screen,
+    login(Usr, Senha, Tipo), 
     
-    (login(Usr, Senha, Veri) ->
-        (Veri == null ->
-            writeln("Usuario ou Senha Invalido"),
-            writeln("Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"),
-            read_line_to_codes(user_input, ComandoCodes),
-            string_to_atom(ComandoCodes, Comando),
-            (Comando == '-' -> menuInicial ; abalogin)
-        ; Veri == 'h' ->
+    (Tipo = "-" ->
+        writeln("Usuario ou Senha Invalido"),
+        writeln("Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"),
+        read_line_to_codes(user_input, ComandoCodes),
+        string_to_atom(ComandoCodes, Comando),
+        (Comando == '-' -> menuInicial ; abalogin)
+        ; Tipo == "h" ->
             writeln("Usuario fora de Horario de Acesso"),
             writeln("Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"),
             read_line_to_codes(user_input, ComandoCodes),
             string_to_atom(ComandoCodes, Comando),
             (Comando == '-' -> menuInicial ; abalogin)
-        ; tipoMenu(Veri, Usr)
-        )
-    ; writeln("Erro ao verificar login"), abalogin
+        ; tipoMenu(Tipo, Usr)
     ).
 
 tipoMenu("ADM", Usr) :- menuAdm(Usr).

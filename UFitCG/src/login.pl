@@ -1,39 +1,21 @@
 :- module(login, [login/3]).
+:- usuario/7.
 
-login(User, Senha, Result) :-
-    verifica_dados_login(User, Senha, VeriDados),
-    (   VeriDados == true 
-    ->  verifica_horario(User, VeriHorario),
-        (   VeriHorario == true
-        ->  veri_usuario(User, Senha, Tipo),
-            Result = Tipo
-        ;   Result = 'h'
-        )
-    ;   Result = ''
-    ).
+login(User, Senha, Tipo) :-
+    (verifica_dados_login(User, Senha, T) -> 
+        (verifica_horario(User) -> Tipo = T; Tipo = "h")
+    ; Tipo = "-").
 
-veri_usuario(User, Senha, Tipo) :-
+verifica_dados_login(User, Senha, Tipo) :-
+    consult('data/usuario_db.pl'),
     usuario(User, Senha, Tipo, _, _, _, _).
 
-verifica_dados_login(User, Senha, VeriDados) :-
-    (   exists_file('../data/usuario_db.pl')
-    ->  consult('../data/usuario_db.pl'),
-        (   usuario(User, Senha, _, _, _, _, _)
-        ->  VeriDados = true
-        ;   VeriDados = false
-        )
-    ;   VeriDados = false
-    ).
-
-verifica_horario(User, VeriHorario) :-
+verifica_horario(User) :-
     usuario(User, _, _, _, _, TipoAssinatura, _),
-    get_time(CurrentTime),
-    stamp_date_time(CurrentTime, DateTime, local),
-    date_time_value(hour, DateTime, Hour),
-    (   TipoAssinatura == 'SIL'
-    ->  (   Hour >= 6, Hour =< 14
-        ->  VeriHorario = true
-        ;   VeriHorario = false
-        )
-    ;   VeriHorario = true
+    (TipoAssinatura = "SIL" ->  
+        get_time(CurrentTime),
+        stamp_date_time(CurrentTime, DateTime, local),
+        date_time_value(hour, DateTime, Hour),
+        Hour >= 6, Hour =< 14
+        ; true
     ).
