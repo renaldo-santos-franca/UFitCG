@@ -2,6 +2,7 @@
 :- use_module(login).
 clear_screen :- write('\e[H\e[2J').
 
+/*lembrar de converter todos os inputs de menus de atom pra string*/
 menuInicial :-
     clear_screen,
     writeln("|------------------------------|\n|      Bem vindo à UFitCG      |\n|                              |\n|    Tecle ENTER para Login    |\n|      Digite - para Sair      |\n|------------------------------|\n"),
