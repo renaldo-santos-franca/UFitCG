@@ -4,16 +4,14 @@ clear_screen :- write('\e[H\e[2J').
 
 menuInicial :-
     clear_screen,
-    writeln("|------------------------------|\n|      Bem vindo à UFitCG      |\n|                              |\n|      Digite 1 para Login     |\n|      Digite 2 para Sair      |\n|------------------------------|\n"),
-    read_line_to_codes(user_input, X3),
-    string_to_atom(X3,X2),
-    atom_number(X2,Opcao),
-    acaotelainicial(Opcao),
-    halt.
+    writeln("|------------------------------|\n|      Bem vindo à UFitCG      |\n|                              |\n|    Tecle ENTER para Login    |\n|      Digite - para Sair      |\n|------------------------------|\n"),
+    read_line_to_codes(user_input, InputCodes),
+    string_to_atom(InputCodes, Input),
+    acaoTelaInicial(Input),
+    clear_screen.
 
-acaotelainicial(1) :- abalogin.
-acaotelainicial(2) :- halt.
-acaotelainicial(_) :- write("opção invalida"), menuInicial.
+acaoTelaInicial("-") :- halt.
+acaoTelaInicial(_) :- abalogin.
 
 abalogin :-
     clear_screen,
@@ -56,8 +54,9 @@ menuAdm(Usr) :-
     writeln("1. Controle de Usuario\n2. Controle da Loja\n3. Controle Assinaturas\n4. Vendas Assinaturas\n5. Vendas Loja\n6. Perfil\n-. Sair"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuADM(Comando, Usr).
+    acaoMenuADM(ComandoStr, Usr).
 
 acaoMenuADM("1", Usr) :- menuUsuarioAdm(Usr).
 acaoMenuADM("2", Usr) :- menuLojaAdm(Usr).
@@ -76,8 +75,9 @@ menuVendasLojaAdm(Usr) :-
     writeln("1. Debito Cliente\n2. Apagar Venda Loja\n3. Listar Vendas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuVendasLojaAdm(Comando, Usr).
+    acaoMenuVendasLojaAdm(ComandoStr, Usr).
 
 acaoMenuVendasLojaAdm("1", Usr) :-
     write("Cliente: "),
@@ -106,8 +106,9 @@ menuVendasAdm(Usr) :-
     writeln("1. Cadastrar Venda\n2. Cancelar Venda\n3. Listar Vendas\n4. Adicionar Parcela Paga\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuVendasAdm(Comando, Usr).
+    acaoMenuVendasAdm(ComandoStr, Usr).
 
 acaoMenuVendasAdm("1", Usr) :-
     write("Cliente: "),
@@ -159,8 +160,9 @@ menuUsuarioAdm(Usr) :-
     writeln("1. Cadastrar Usuario\n2. Apagar Usuario\n3. Listar Usuarios\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuUsuarioAdm(Comando, Usr).
+    acaoMenuUsuarioAdm(ComandoStr, Usr).
 
 acaoMenuUsuarioAdm("1", Usr) :-
     writeln("Usuario: "),
@@ -209,8 +211,9 @@ menuUsuarioListarAdm(Usr) :-
     writeln("1. Listar Usuarios\n2. Listar Usuarios Por Tipo\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuUsuarioListarAdm(Comando, Usr).
+    acaoMenuUsuarioListarAdm(ComandoStr, Usr).
 
 acaoMenuUsuarioListarAdm("1", Usr) :-
     mostrarUsuarios,
@@ -231,8 +234,9 @@ menuLojaAdm(Usr) :-
     writeln("1. Cadastrar Produto\n2. Apagar Produto\n3. Listar Produtos\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuLojaAdm(Comando, Usr).
+    acaoMenuLojaAdm(ComandoStr, Usr).
 
 acaoMenuLojaAdm(1, Usr) :-
     writeln("Nome do produto: "),
@@ -272,8 +276,9 @@ menuLojaListarAdm(Usr) :-
     writeln("1. Listar Produtos\n2. Listar Produtos Por Categoria\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuLojaListarAdm(Comando, Usr).
+    acaoMenuLojaListarAdm(ComandoStr, Usr).
 
 acaoMenuLojaListarAdm("1", Usr) :-
     listaProdutos,
@@ -296,8 +301,9 @@ menuAssAdm(Usr) :-
     writeln("1. Cadastrar Assinatura\n2. Apagar Assinatura\n3. Listar Assinaturas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuAssAdm(Comando, Usr).
+    acaoMenuAssAdm(ComandoStr, Usr).
 
 acaoMenuAssAdm("1", Usr) :-
     writeln("sigla: "),
@@ -347,16 +353,17 @@ acaoMenuAssAdm("-", Usr) :- menuAdm(Usr).
 
 menuPer(Usr) :-
     writeln("Digite O Numero Do Comando A Sua Escolha"),
-    writeln("1. Controle de Usuario\n2. Controle da Loja\n3. Controle Assinaturas\n4. Vendas Assinaturas\n5. Vendas Loja\n6. Perfil\n-. Sair"),
+    writeln("1. Controle de Aulas\n2. Controle Avaliações Fisicas\n3. Controle Ficha de Treino\n4. Perfil\n-. Sair"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuPer(Comando, Usr).
+    acaoMenuPer(ComandoStr, Usr).
 
 acaoMenuPer("1", Usr) :- menuAulasPer(Usr).
 acaoMenuPer("2", Usr) :- menuAvaliacaoPer(Usr).
 acaoMenuPer("3", Usr) :- menuTreinoPer(Usr).
-acaoMenuPer("4", Usr) :- 
+acaoMenuPer("4", Usr) :-
     mostrarPerfil(Usr),
     espera,
     menuPer(Usr).
@@ -368,8 +375,9 @@ menuTreinoPer(Usr) :-
     writeln("1. Cadastrar Treino\n2. Apagar Treino\n3. Listar Treinos\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuTreinoPer(Comando, Usr).
+    acaoMenuTreinoPer(ComandoStr, Usr).
 
 acaoMenuTreinoPer("1", Usr) :-
     writeln("Cliente: "),
@@ -407,8 +415,9 @@ menuAvaliacaoPer(Usr) :-
     writeln("1. Cadastrar Avaliacao Fisica\n2. Apagar Avaliacao Fisica\n3. Listar Avaliacoes Fisicas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuAvaliacaoPer(Comando, Usr).
+    acaoMenuAvaliacaoPer(ComandoStr, Usr).
 
 acaoMenuAvaliacaoPer("1", Usr) :-
     writeln("Cliente: "),
@@ -449,8 +458,9 @@ menuAulasPer(Usr) :-
     writeln("1. Cadastrar Aula\n2. Apagar Aula\n3. Listar Aulas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuAulasPer(Comando, Usr).
+    acaoMenuAulasPer(ComandoStr, Usr).
 
 acaoMenuAulasPer("1", Usr) :-
     writeln("Materia: "),
@@ -485,8 +495,9 @@ menuListaAulaPer(Usr) :-
     writeln("1. Listar Minhas Aulas\n2. Listar todas Aulas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuListaAulaPer(Comando, Usr).
+    acaoMenuListaAulaPer(ComandoStr, Usr).
 
 acaoMenuListaAulaPer("1", Usr) :-
     listarAulasPersonal(Usr),
@@ -506,8 +517,9 @@ menuCli(Usr) :-
     writeln("1. Controle Aulas\n2. Listar Minhas Fichas de Trieno\n3. Minhas Avaliações Fisicas\n4. MarcketPlace\n5. Suporte\n6. Perfil\n-. Sair"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuCli(Comando, Usr).
+    acaoMenuCli(ComandoStr, Usr).
 
 acaoMenuCli("1", Usr) :- menuAulasCli(Usr).
 acaoMenuCli("2", Usr) :-
@@ -538,8 +550,9 @@ menuAulasCli(Usr) :-
     writeln("1. Inscrever em Aula\n2. Cancelar Inscrição\n3. Listar Aulas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuAulasCli(Comando, Usr).
+    acaoMenuAulasCli(ComandoStr, Usr).
 
 acaoMenuAulasCli("1", Usr) :-
     writeln("Id da Aula: "),
@@ -568,8 +581,9 @@ menuAulasListarCli(Usr) :-
     writeln("1. Listar Minhas Aulas\n2. Listar todas Aulas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuAulasListarCli(Comando, Usr).
+    acaoMenuAulasListarCli(ComandoStr, Usr).
 
 acaoMenuAulasListarCli("1", Usr) :-
     listarAulasCliente(Usr),
@@ -589,8 +603,9 @@ menuMarketPlaceCli(Usr) :-
     writeln("1. Listar Produtos\n2. Carrinho\n3. Adicionar Produto ao Carrinho\n4. Remover Produto do Carrinho\n5. Pagar\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuMarketPlaceCli(Comando, Usr).
+    acaoMenuMarketPlaceCli(ComandoStr, Usr).
 
 acaoMenuMarketPlaceCli("1", Usr) :- menuMarcketPlaceListarProdCli(Usr).
 acaoMenuMarketPlaceCli("2", Usr) :- 
@@ -628,8 +643,9 @@ menuMarcketPlaceListarProdCli(Usr) :-
     writeln("1. Listar Todos os Produtos\n2. Listar Produto por Categoria\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
+    atom_string(Comando, ComandoStr),
     clear_screen,
-    acaoMenuMarcketPlaceListarProdCli(Comando, Usr).
+    acaoMenuMarcketPlaceListarProdCli(ComandoStr, Usr).
 
 acaoMenuMarcketPlaceListarProdCli("1", Usr) :-
     listaProdutos,

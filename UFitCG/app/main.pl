@@ -1,5 +1,5 @@
 :- ['../src/navegabilidade'].
-:- ['../src/usuario'].
+:- ['../src/Usuario'].
 :- ['../src/assinatura'].
 :- ['../src/avaliacaoFisica'].
 :- ['../src/fichaTreino'].
