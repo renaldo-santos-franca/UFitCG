@@ -405,14 +405,15 @@ menuTreinoPer(Usr) :-
 acaoMenuTreinoPer("1", Usr) :-
     writeln("Cliente: "),
     read_line_to_codes(user_input, ClienteCodes),
-    string_to_atom(ClienteCodes, Usr_cli),
+    string_to_atom(ClienteCodes, Clienteatom),
+    atom_string(Clienteatom, Cliente),
     writeln("Exercicios: "),
     read_line_to_codes(user_input, ExerciciosCodes),
     string_to_atom(ExerciciosCodes, Exercicios),
     writeln("Observacoes: "),
     read_line_to_codes(user_input, ObservacoesCodes),
     string_to_atom(ObservacoesCodes, Observacoes),
-    cadastraFicha(Usr_cli, Usr, Exercicios, Observacoes),
+    cadastraFicha(Cliente, Usr, Exercicios, Observacoes),
     espera,
     clear_screen,
     menuTreinoPer(Usr).
