@@ -2,6 +2,10 @@
 :- use_module(aulaExtra).
 :- use_module(usuario).
 :- use_module(fichaTreino).
+:- use_module(avaliacaoFisica).
+:- use_module(loja).
+:- use_module(aulaCliente).
+:- use_module(assinatura).
 %clear_screen :- write('').
 clear_screen :- write('\e[H\e[2J').
 
@@ -204,8 +208,7 @@ acaoMenuUsuarioAdm("2", Usr) :-
     writeln("Usuario: "),
     read_line_to_codes(user_input, UsrCodes),
     string_to_atom(UsrCodes, Usuario),
-    removeUsuario(Usuario, Mensagem),
-    writeln(Mensagem),
+    removeUsuario(Usuario),
     espera,
     clear_screen,
     menuUsuarioAdm(Usr).
@@ -232,9 +235,9 @@ acaoMenuUsuarioListarAdm("1", Usr) :-
     menuUsuarioListarAdm(Usr).
 acaoMenuUsuarioListarAdm("2", Usr) :-
     writeln("Tipo de Usuario: "),
-    read_line_to_codes(user_input, TipoCodes),
-    string_to_atom(TipoCodes, Tipo_usr),
-    mostrarUsuariosPorTipo(Tipo_usr),
+    read_line_to_codes(user_input, Tipo_usr),
+    %string_to_atom(TipoCodes, Tipo_usr),
+    mostrarUsuariosTipo(Tipo_usr),
     espera,
     clear_screen,
     menuUsuarioListarAdm(Usr).
@@ -250,7 +253,7 @@ menuLojaAdm(Usr) :-
     clear_screen,
     acaoMenuLojaAdm(ComandoStr, Usr).
 
-acaoMenuLojaAdm(1, Usr) :-
+acaoMenuLojaAdm("1", Usr) :-
     writeln("Nome do produto: "),
     read_line_to_codes(user_input, NomeCodes),
     string_to_atom(NomeCodes, Nome),
@@ -264,22 +267,22 @@ acaoMenuLojaAdm(1, Usr) :-
     writeln("Categorias: "),
     read_line_to_codes(user_input, CategoriasCodes),
     string_to_atom(CategoriasCodes, Categorias),
-    cadastraProduto(Nome, Preco, Descricao, Categorias),
+    cadastroProduto(Nome, Preco, Descricao, Categorias),
     espera,
     clear_screen,
     menuLojaAdm(Usr).
 
-acaoMenuLojaAdm(2, Usr) :-
+acaoMenuLojaAdm("2", Usr) :-
     writeln("Id do produto: "),
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id),
-    removeProduto(Id),
+    remove_produto(Id),
     espera,
     clear_screen,
     menuLojaAdm(Usr).
 
-acaoMenuLojaAdm(3, Usr) :-
+acaoMenuLojaAdm("3", Usr) :-
     menuLojaListarAdm(Usr).
 
 acaoMenuLojaAdm("-", Usr) :- menuAdm(Usr).
@@ -295,7 +298,7 @@ menuLojaListarAdm(Usr) :-
     acaoMenuLojaListarAdm(ComandoStr, Usr).
 
 acaoMenuLojaListarAdm("1", Usr) :-
-    listaProdutos,
+    listar_produtos,
     espera,
     clear_screen,
     menuLojaListarAdm(Usr).
@@ -304,7 +307,7 @@ acaoMenuLojaListarAdm("2", Usr) :-
     writeln("Categoria: "),
     read_line_to_codes(user_input, CategoriaCodes),
     string_to_atom(CategoriaCodes, Categoria),
-    listarProdutosPorCategoria(Categoria),
+    listar_produtos_por_categoria(Categoria),
     espera,
     clear_screen,
     menuLojaListarAdm(Usr).
@@ -363,7 +366,7 @@ acaoMenuAssAdm("2", Usr) :-
     menuAssAdm(Usr).
 
 acaoMenuAssAdm("3", Usr) :-
-    listarAssinaturas,
+    mostrarAssinaturas,
     espera,
     clear_screen,
     menuAssAdm(Usr).
@@ -455,7 +458,7 @@ acaoMenuAvaliacaoPer("1", Usr) :-
     writeln("Data: "),
     read_line_to_codes(user_input, DataCodes),
     string_to_atom(DataCodes, Data_ava),
-    cadastraAvaliacao(Cliente, Avaliacao, Observacoes, Data_ava),
+    cadastraAvaliacao(Cliente, Usr, Avaliacao, Observacoes, Data_ava),
     espera,
     clear_screen,
     menuAvaliacaoPer(Usr).
@@ -558,15 +561,27 @@ acaoMenuCli("2", Usr) :-
     menuCli(Usr).
 
 acaoMenuCli("3", Usr) :-
-    listarAvaliacoesCliente(Usr),
+    mostrarAvaliacaoCliente(Usr),
     espera,
     clear_screen,
     menuCli(Usr).
 
+print_file(FilePath) :-
+    open(FilePath, read, Stream),
+    read_file(Stream),
+    close(Stream).
+
+read_file(Stream) :-
+    read_line_to_string(Stream, Line),
+    ( Line \= end_of_file ->
+        writeln(Line),
+        read_file(Stream) 
+    ; true 
+    ).
+
 acaoMenuCli("4", Usr) :- menuMarketPlaceCli(Usr).
 acaoMenuCli("5", Usr) :- 
-    readFile("data/Suporte.txt", Conteudo),
-    writeln(Conteudo),
+    print_file('data/suporte.txt'),
     espera,
     clear_screen,
     menuCli(Usr).
@@ -592,7 +607,7 @@ acaoMenuAulasCli("1", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id),
-    adicionarAulaExtra(Id, Usr),
+    adicionarAulaExtra(Usr, Id),
     espera,
     clear_screen,
     menuAulasCli(Usr).
@@ -602,12 +617,12 @@ acaoMenuAulasCli("2", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id),
-    cancelarAula(Id, Usr),
+    cancelarAula(Usr, Id),
     espera,
     clear_screen,
     menuAulasCli(Usr).
 
-acaoMenuAulasCli("3", Usr) :- menuAulaListaCli(Usr).
+acaoMenuAulasCli("3", Usr) :- menuAulasListarCli(Usr).
 acaoMenuAulasCli("-", Usr) :- menuCli(Usr).
 acaoMenuAulasCli(_, Usr) :- menuAulasCli(Usr).
 

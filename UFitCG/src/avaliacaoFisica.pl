@@ -1,6 +1,7 @@
 :- module(avaliacaoFisica, [cadastraAvaliacao/5, mostrarAvaliacaoCliente/1, mostrarAvaliacaoPersonal/1, removeAvaliacao/1]).
 :- dynamic avaliacao_fisica/6, avaliacaoId/1.
-:- ['../src/Usuario'].
+:- use_module(usuario, [verificaExistenciaUsuario/1]).
+:- ['data/avaliacao_db.pl'].
 
 cadastraAvaliacao(Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava):-
     (\+ verificaExistenciaUsuario(Usr_cli)) -> (write('Usuario Inexistente!'), nl) ; (
@@ -12,7 +13,7 @@ cadastraAvaliacao(Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava):-
     ).
 
 pegaId(Id):- 
-    consult('data/avaliacao_db.pl'),
+    %consult('data/avaliacao_db.pl'),
     avaliacaoId(Id),
     retract(avaliacaoId(Id)), IdNovo is Id + 1,
     assertz(avaliacaoId(IdNovo)),
@@ -34,17 +35,17 @@ removeAvaliacao(Id) :-
     ).
 
 verificaExistenciaAvaliacao(Id) :-
-    consult('data/avaliacao_db.pl'),
+    %consult('data/avaliacao_db.pl'),
     avaliacao_fisica(Id, _, _, _, _, _).
 
 mostrarAvaliacaoCliente(Usr) :-
-    consult('data/avaliacao_db.pl'),
+    %consult('data/avaliacao_db.pl'),
     findall(avaliacao_fisica(_, Usr, Usr_Per, Avaliacao, Observacoes, Data_ava), avaliacao_fisica(Id, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava), Avaliacoes),
     (Avaliacoes \= [] -> mostrarListaAvaliacoes(Avaliacoes)
     ; write('Nenhuma avaliação encontrada para o cliente!'), nl).
 
 mostrarAvaliacaoPersonal(Usr) :-
-    consult('data/avaliacao_db.pl'),
+    %consult('data/avaliacao_db.pl'),
     findall(avaliacao_fisica(_, Usr_cli, Usr, Avaliacao, Observacoes, Data_ava), avaliacao_fisica(Id, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava), Avaliacoes),
     (Avaliacoes \= [] -> mostrarListaAvaliacoes(Avaliacoes)
     ; write('Nenhuma avaliação encontrada para o Personal!'), nl).

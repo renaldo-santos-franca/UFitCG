@@ -1,2 +1,2 @@
 :- dynamic(ficha_treino/5).
-fichaId(2).
+fichaId(3).

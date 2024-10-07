@@ -1,5 +1,4 @@
-:- module(usuario, [login/3, cadastraUsuario/7, removeUsuario/1, mostrarPerfil/1, mostrarUsuariosTipo/1, mostrarUsuarios/0, verificaExistenciaCliente/1, verfivaPersonal/1]).
-:- ['../data/usuario_db.pl'].
+:- module(usuario, [login/3, cadastraUsuario/7, removeUsuario/1, mostrarPerfil/1, mostrarUsuariosTipo/1, mostrarUsuarios/0, verificaExistenciaCliente/1, verfivaPersonal/1, verificaExistenciaUsuario/1]).
 :- use_module(assinatura, [verificaExistenciaAssinatura/1]).
 :- dynamic usuario/7.
 :- dynamic assinatura/7.
@@ -10,10 +9,11 @@ login(User, Senha, Tipo) :-
     ; Tipo = "-").
 
 verifica_dados_login(User, Senha, Tipo) :-
-    %reconsult('data/usuario_db.pl'),
+    consult('data/usuario_db.pl'),
     usuario(User, Senha, Tipo, _, _, _, _).
 
 verifica_horario(User) :-
+    consult('data/usuario_db.pl'),
     usuario(User, _, _, _, _, TipoAssinatura, _),
     (TipoAssinatura = "SIL" ->  
         get_time(CurrentTime),
@@ -23,8 +23,13 @@ verifica_horario(User) :-
         ; true
     ).
 
-verificaExistenciaCliente(Usr_cli) :-
-    usuario(Usr_cli, _, "CLI", _, _, _, _).
+verfivaPersonal(Usr) :-
+    consult('data/usuario_db.pl'),
+    usuario(Usr, _, "PER", _, _, _, _).
+
+verificaExistenciaCliente(Usr) :-
+    consult('data/usuario_db.pl'),
+    usuario(Usr, _, "CLI", _, _, _, _).
 
 cadastraUsuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario) :-
     (verificaExistenciaUsuario(Usr) -> write('Usuario Existente!'), nl
@@ -51,7 +56,7 @@ insertUser(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario
     close(Stream). 
 
 verificaExistenciaUsuario(Usr):-
-    %reconsult('data/usuario_db.pl'),
+    consult('data/usuario_db.pl'),
     usuario(Usr, _, _, _, _, _, _).
 
 removeUsuario(Usr) :-
@@ -79,7 +84,7 @@ mostrarPerfil(Usr):-
     ) ; write('Usuario Inexistente!'), nl).
 
 mostrarUsuarios :- 
-    %reconsult('data/usuario_db.pl'),
+    consult('data/usuario_db.pl'),
     findall(usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), Usuarios),
     (Usuarios \= [] -> mostrarListaUsuarios(Usuarios)
     ; write('Nenhum usuario encontrado!'), nl).
@@ -95,7 +100,7 @@ mostrarListaUsuarios([usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinat
     mostrarListaUsuarios(Resto).
 
 mostrarUsuariosTipo(TipoUsr) :-
-    %reconsult('data/usuario_db.pl'),
+    consult('data/usuario_db.pl'),
     findall(usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), usuario(Usr, _, TipoUsr, Nome, DataNascimento, TipoAssinatura, Salario), Usuarios),
     (Usuarios \= [] -> mostrarListaUsuarios(Usuarios)
     ; write('Nenhum usuario encontrado para o tipo especificado!'), nl).
@@ -110,7 +115,3 @@ atualizaBaseDeDados :-
            format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', 
                   [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario])),
     close(Stream).
-
-verfivaPersonal(Usr) :-
-    %reconsult('data/usuario_db.pl'),
-    usuario(Usr, _, "PER", _, _, _, _).

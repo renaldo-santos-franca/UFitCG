@@ -1,4 +1,5 @@
-:- module(loja, [cadastroProduto/4]).
+:- module(loja, [cadastroProduto/4, remove_produto/1, listar_produtos_por_categoria/1, listar_produtos/0]).
+['../data/loja_db.pl'].
 :- dynamic produto/5.
 
 cadastroProduto(Nome, Valor, Descricao, Categorias) :- 
@@ -27,9 +28,12 @@ id_produto(NovoId) :-
       NovoId is MaxId + 1         
     ).
 
+verificaId(Id) :-
+    produto(Id, _, _, _, _).
+
 remove_produto(Id) :-
     consult('data/loja_db.pl'),  
-    ( produto(Id, _, _, _, _) ->  
+    ( verificaId(Id) ->  
         retract(produto(Id, _, _, _, _)),   
         atualizar_arquivo, 
         writeln("Produto removido!")
@@ -38,6 +42,7 @@ remove_produto(Id) :-
 
 atualizar_arquivo :-
     open('data/loja_db.pl', write, Stream), 
+    format(Stream, ':- dynamic(produto/5).~n', []),
     forall(produto(Id, Nome, Valor, Descricao, Categorias),
         format(Stream, 'produto(~w, "~w", ~w, "~w", "~w").~n', [Id, Nome, Valor, Descricao, Categorias])
     ),

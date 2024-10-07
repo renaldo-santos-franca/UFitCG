@@ -1,12 +1,11 @@
 :- module(fichaTreino, [cadastraFicha/4, removeFicha/1, mostrarFichaCliente/1, mostrarFichaPersonal/1]).
 :- ['data/ficha_db.pl'].
-:- use_module(usuario, [verificaExistenciaCliente/1]).
-:- dynamic ficha_treino/5, fichaId/1.
+:- ['src/usuario.pl'].
+:- dynamic(ficha_treino/5).
+:- dynamic(fichaId/1).
 
 cadastraFicha(Usr_cli, Usr_per, Exercicios, Observacoes):-
-    writeln(Usr_cli),
-    (verificaExistenciaCliente(Usr_cli) -> writeln('SHOW')),
-    (verificaExistenciaCliente(Usr_cli) -> pegaId(Id), insertFicha(Id, Usr_cli, Usr_per, Exercicios, Observacoes),
+    (verificaExistenciaCliente(Usr_cli) -> pegaId(Id), insertFicha(Id, Usr_cli, Usr_per, Exercicios, Observacoes), reconsult('data/ficha_db.pl'),
        write('Ficha de Treino Adicionada com Sucesso!'), nl
        ; writeln('Usuario Inexistente!')
     ).
@@ -61,7 +60,7 @@ mostrarListaFichas([ficha_treino(_, Usr_cli, Usr_per, Exercicios, Observacoes) |
 atualizaBaseDeDados :-
     open('data/ficha_db.pl', write, Stream),
 
-    format(Stream, ':- dynamic(ficha_treino/5)~n.', []),
+    format(Stream, ':- dynamic(ficha_treino/5).~n', []),
 
     findall(fichaId(IdFicha),
             fichaId(IdFicha), 

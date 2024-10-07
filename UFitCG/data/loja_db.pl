@@ -1,0 +1,1 @@
+:- dynamic(produto/5).

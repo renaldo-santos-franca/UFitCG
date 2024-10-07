@@ -1,4 +1,4 @@
-:- module(aulaExtra, [cadastraAula/4, listarAulas/0, listarAulasPersonal/1, removeAula/1, verificaId/1]).
+:- module(aulaExtra, [cadastraAula/4, listarAulas/0, listarAulasPersonal/1, removeAula/1, verificaId/1, pegaInfoAula/4]).
 :- use_module(usuario, [verfivaPersonal/1]).
 :- ['data/aula_db.pl'].
 :- dynamic aula/5.
@@ -9,8 +9,7 @@ cadastraAula(Materia, Usr_per, Data_horario, Limite) :-
     (Limite =< 0 -> writeln("Limite Invalido")
     ; string_length(Data_horario, Len), Len \= 22 -> writeln("Horario Invalido")
     ; \+ verfivaPersonal(Usr_per) -> writeln("Usuario Invalido")
-    ; %reconsult('data/aula_db.pl'), 
-      insertAula(Materia, Usr_per, Data_horario, Limite),
+    ; insertAula(Materia, Usr_per, Data_horario, Limite),
       writeln("Aula Cadastrada com Sucesso")
     ).
 
@@ -88,3 +87,7 @@ atualizar_arquivo_aula_db :-
     forall(id_aula(Id), format(Stream, 'id_aula(~w).~n', [Id])),
     forall(aula(IdAula, Materia, Usr_per, Data_horario, Limite), format(Stream, 'aula(~w, "~w", "~w", "~w", ~w).~n', [IdAula, Materia, Usr_per, Data_horario, Limite])),
     close(Stream).
+
+pegaInfoAula(Id, Materia, Personal, Data) :-
+    consult('data/aula_db.pl'),
+    aula(Id, Materia, Personal, Data, _).
