@@ -1,4 +1,6 @@
-:- module(aulaExtra, [cadastraAula/4, listar_aulas/0, listarAulasPersonal/1, remover_aula/1, verificaId/1]).
+:- module(aulaExtra, [cadastraAula/4, listarAulas/0, listarAulasPersonal/1, removeAula/1, verificaId/1]).
+:- use_module(usuario, [verfivaPersonal/1]).
+:- ['data/aula_db.pl'].
 :- dynamic aula/5.
 :- dynamic usuario/7.
 
@@ -7,13 +9,13 @@ cadastraAula(Materia, Usr_per, Data_horario, Limite) :-
     (Limite =< 0 -> writeln("Limite Invalido")
     ; string_length(Data_horario, Len), Len \= 22 -> writeln("Horario Invalido")
     ; \+ verfivaPersonal(Usr_per) -> writeln("Usuario Invalido")
-    ; consult('data/aula_db.pl'), 
+    ; %reconsult('data/aula_db.pl'), 
       insertAula(Materia, Usr_per, Data_horario, Limite),
       writeln("Aula Cadastrada com Sucesso")
     ).
 
 pegaIdAula(Id) :-
-    consult('data/aula_db.pl'),
+    %reconsult('data/aula_db.pl'),
     id_aula(Id).
 
 insertAula(Materia, Usr_per, Data_horario, Limite) :-
@@ -24,16 +26,12 @@ insertAula(Materia, Usr_per, Data_horario, Limite) :-
     close(Stream),
     incrementa_id_aula.
 
-verfivaPersonal(Usr) :-
-    consult('data/usuario_db.pl'),
-    usuario(Usr, _, "PER", _, _, _, _).
-
 verificaId(Id) :-
-    consult('data/aula_db.pl'),
+    %reconsult('data/aula_db.pl'),
     aula(Id, _, _, _, _).
 
 incrementa_id_aula :-
-    consult('data/aula_db.pl'),
+    %reconsult('data/aula_db.pl'),
     id_aula(IdAtual),
     retract(id_aula(IdAtual)),
     NovoId is IdAtual + 1,
@@ -49,8 +47,8 @@ atualiza_arquivo_aula_db(NovoId) :-
     close(StreamAula).
 
 
-listar_aulas :-
-    consult('data/aula_db.pl'),
+listarAulas :-
+    %reconsult('data/aula_db.pl'),
     findall(aula(Id, Materia, Usr_per, Data_horario, Limite), aula(Id, Materia, Usr_per, Data_horario, Limite), Aulas),
     (Aulas \= [] -> mostrarListaAulas(Aulas)
     ; writeln('Nenhuma Aula Cadastrada')
@@ -62,22 +60,22 @@ mostrarListaAulas([aula(Id, Materia, Usr, Data_horario, Limite) | T]) :-
     write('Materia: '), writeln(Materia),
     write('Usuario: '), writeln(Usr),
     write('Data-Horario: '), writeln(Data_horario),
-    write('Limite: '). writeln(Limite), nl,
+    write('Limite: '), writeln(Limite), nl,
     mostrarListaAulas(T).
 
 
 listarAulasPersonal(Usr) :-
-    consult('data/aula_db.pl'),
+    %reconsult('data/aula_db.pl'),
     (   aula(_, _, Usr, _, _) -> 
-        forall((aula(Id, Materia, Usr, Data_horario, Limite), Id \= -1),
+        forall((aula(Id, Materia, Usr, Data_horario, Limite)),
                format(' ID: ~w~n Matéria: ~w~n Usuário: ~w~n Data/Horário: ~w~n Limite: ~w~n~n', [Id, Materia, Usr, Data_horario, Limite]))
     ;   writeln('Nenhuma Aula Cadastrada')
     ).
 
-remover_aula(Id_str) :-
+removeAula(Id_str) :-
     atom_number(Id_str, Id),
-    (verificaId(Id), Id > 0 -> 
-        consult('data/aula_db.pl'),
+    (verificaId(Id) -> 
+        %reconsult('data/aula_db.pl'),
         retract(aula(Id, Materia, Usr_per, Data_horario, Limite)),
         writeln('Aula removida com sucesso!'),
         atualizar_arquivo_aula_db

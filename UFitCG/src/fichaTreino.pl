@@ -1,12 +1,14 @@
 :- module(fichaTreino, [cadastraFicha/4, removeFicha/1, mostrarFichaCliente/1, mostrarFichaPersonal/1]).
-:- ['../src/usuario'].
+:- ['data/ficha_db.pl'].
+:- use_module(usuario, [verificaExistenciaCliente/1]).
 :- dynamic ficha_treino/5, fichaId/1.
 
 cadastraFicha(Usr_cli, Usr_per, Exercicios, Observacoes):-
-    \+ verificaExistenciaUsuario(Usr_cli) -> (write('"Usuario Inexistente!'), nl) ; (
-        pegaId(Id),
-        insertFicha(Id, Usr_cli, Usr_per, Exercicios, Observacoes),
+    writeln(Usr_cli),
+    (verificaExistenciaCliente(Usr_cli) -> writeln('SHOW')),
+    (verificaExistenciaCliente(Usr_cli) -> pegaId(Id), insertFicha(Id, Usr_cli, Usr_per, Exercicios, Observacoes),
        write('Ficha de Treino Adicionada com Sucesso!'), nl
+       ; writeln('Usuario Inexistente!')
     ).
 
 insertFicha(Id, Usr_cli, Usr_per, Exercicios, Observacoes):-
@@ -16,7 +18,7 @@ insertFicha(Id, Usr_cli, Usr_per, Exercicios, Observacoes):-
     close(Stream). 
 
 pegaId(Id):- 
-    consult('data/ficha_db.pl'),
+    %consult('data/ficha_db.pl'),
     fichaId(Id),
     retract(fichaId(Id)), IdNovo is Id + 1,
     assertz(fichaId(IdNovo)),
@@ -32,17 +34,17 @@ removeFicha(Id) :-
     ).
 
 verificaExistenciaFicha(Id) :-
-    consult('data/ficha_db.pl'),
+    %consult('data/ficha_db.pl'),
     ficha_treino(Id, _, _, _, _).
 
 mostrarFichaCliente(Usr) :-
-    consult('data/ficha_db.pl'),
+    %consult('data/ficha_db.pl'),
     findall(ficha_treino(_, Usr, Usr_per, Exercicios, Observacoes), ficha_treino(_, Usr, Usr_per, Exercicios, Observacoes), Fichas),
     (Fichas \= [] -> mostrarListaFichas(Fichas)
     ; write('Nenhuma ficha de treino encontrada para o cliente!'), nl).
 
 mostrarFichaPersonal(Usr) :-
-    consult('data/ficha_db.pl'),
+    %consult('data/ficha_db.pl'),
     findall(ficha_treino(_, Usr_cli, Usr, Exercicios, Observacoes), ficha_treino(_, Usr_cli, Usr, Exercicios, Observacoes), Fichas),
     (Fichas \= [] -> mostrarListaFichas(Fichas)
     ; write('Nenhuma ficha encontrada para o Personal!'), nl).
@@ -58,6 +60,8 @@ mostrarListaFichas([ficha_treino(_, Usr_cli, Usr_per, Exercicios, Observacoes) |
 
 atualizaBaseDeDados :-
     open('data/ficha_db.pl', write, Stream),
+
+    format(Stream, ':- dynamic(ficha_treino/5)~n.', []),
 
     findall(fichaId(IdFicha),
             fichaId(IdFicha), 

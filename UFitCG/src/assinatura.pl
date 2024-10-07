@@ -1,4 +1,4 @@
-:- module(assinatura, [cadastraAssinatura/7, removeAssinatura/1, mostrarAssinaturaTipo/1, mostrarAssinaturas/0]).
+:- module(assinatura, [cadastraAssinatura/7, removeAssinatura/1, mostrarAssinaturaTipo/1, mostrarAssinaturas/0, verificaExistenciaAssinatura/1]).
 :- dynamic assinatura/7.
 :- dynamic vendaAssinatura/5. 
 

@@ -1,5 +1,8 @@
 :- module(navegabilidade, [menuInicial/0]).
-:- use_module(login).
+:- use_module(aulaExtra).
+:- use_module(usuario).
+:- use_module(fichaTreino).
+%clear_screen :- write('').
 clear_screen :- write('\e[H\e[2J').
 
 /*lembrar de converter todos os inputs de menus de atom pra string*/
@@ -63,6 +66,7 @@ acaoMenuADM("5", Usr) :- menuVendasLojaAdm(Usr).
 acaoMenuADM("6", Usr) :-
     mostrarPerfil(Usr),
     espera,
+    clear_screen,
     menuAdm(Usr).
 acaoMenuADM("-", _) :- menuInicial.
 acaoMenuADM(_, Usr) :- menuAdm(Usr).
@@ -82,6 +86,7 @@ acaoMenuVendasLojaAdm("1", Usr) :-
     string_to_atom(ClienteCodes, Cliente),
     filtrarVendas(Cliente),
     espera,
+    clear_screen,
     menuVendasLojaAdm(Usr).
 acaoMenuVendasLojaAdm("2", Usr) :-
     write("Id: "),
@@ -90,10 +95,12 @@ acaoMenuVendasLojaAdm("2", Usr) :-
     removeVendaLoja(Id, Mensagem),
     writeln(Mensagem),
     espera,
+    clear_screen,
     menuVendasLojaAdm(Usr).
 acaoMenuVendasLojaAdm("3", Usr) :-
     listarVendas,
     espera,
+    clear_screen,
     menuVendasLojaAdm(Usr).
 acaoMenuVendasLojaAdm("-", Usr) :- menuAdm(Usr).
 acaoMenuVendasLojaAdm(_, Usr) :- menuVendasLojaAdm(Usr).
@@ -127,6 +134,7 @@ acaoMenuVendasAdm("1", Usr) :-
     cadastraVendaAssinatura(Cliente, TipoAss, TipoParcela, ParcelasPagas, DataInicio, Mensagem),
     writeln(Mensagem),
     espera,
+    clear_screen,
     menuVendasAdm(Usr).
 acaoMenuVendasAdm("2", Usr) :-
     write("Id: "),
@@ -136,10 +144,12 @@ acaoMenuVendasAdm("2", Usr) :-
     removeVendasAssinatura(Id, Mensagem),
     writeln(Mensagem),
     espera,
+    clear_screen,
     menuVendasAdm(Usr).
 acaoMenuVendasAdm("3", Usr) :-
     listarVendasAssinaturas,
     espera,
+    clear_screen,
     menuVendasAdm(Usr).
 acaoMenuVendasAdm("4", Usr) :-
     write("Cliente: "),
@@ -148,6 +158,7 @@ acaoMenuVendasAdm("4", Usr) :-
     adicionarParcelaPaga(Cliente, Mensagem),
     writeln(Mensagem),
     espera,
+    clear_screen,
     menuVendasAdm(Usr).
 acaoMenuVendasAdm("-", Usr) :- menuAdm(Usr).
 acaoMenuVendasAdm(_, Usr) :- menuVendasAdm(Usr).
@@ -186,6 +197,7 @@ acaoMenuUsuarioAdm("1", Usr) :-
     atom_number(SalarioStr, Salario),
     cadastraUsuario(Usuario, Senha, Tipo_usr, Nome, Data_nas, Tipo_assinatura, Salario),
     espera,
+    clear_screen,
     menuUsuarioAdm(Usr).
 
 acaoMenuUsuarioAdm("2", Usr) :-
@@ -195,6 +207,7 @@ acaoMenuUsuarioAdm("2", Usr) :-
     removeUsuario(Usuario, Mensagem),
     writeln(Mensagem),
     espera,
+    clear_screen,
     menuUsuarioAdm(Usr).
 
 acaoMenuUsuarioAdm("3", Usr) :-
@@ -215,6 +228,7 @@ menuUsuarioListarAdm(Usr) :-
 acaoMenuUsuarioListarAdm("1", Usr) :-
     mostrarUsuarios,
     espera,
+    clear_screen,
     menuUsuarioListarAdm(Usr).
 acaoMenuUsuarioListarAdm("2", Usr) :-
     writeln("Tipo de Usuario: "),
@@ -222,6 +236,7 @@ acaoMenuUsuarioListarAdm("2", Usr) :-
     string_to_atom(TipoCodes, Tipo_usr),
     mostrarUsuariosPorTipo(Tipo_usr),
     espera,
+    clear_screen,
     menuUsuarioListarAdm(Usr).
 acaoMenuUsuarioListarAdm("-", Usr) :- menuUsuarioAdm(Usr).
 acaoMenuUsuarioListarAdm(_, Usr) :- menuUsuarioListarAdm(Usr).
@@ -251,6 +266,7 @@ acaoMenuLojaAdm(1, Usr) :-
     string_to_atom(CategoriasCodes, Categorias),
     cadastraProduto(Nome, Preco, Descricao, Categorias),
     espera,
+    clear_screen,
     menuLojaAdm(Usr).
 
 acaoMenuLojaAdm(2, Usr) :-
@@ -260,6 +276,7 @@ acaoMenuLojaAdm(2, Usr) :-
     atom_number(IdStr, Id),
     removeProduto(Id),
     espera,
+    clear_screen,
     menuLojaAdm(Usr).
 
 acaoMenuLojaAdm(3, Usr) :-
@@ -280,6 +297,7 @@ menuLojaListarAdm(Usr) :-
 acaoMenuLojaListarAdm("1", Usr) :-
     listaProdutos,
     espera,
+    clear_screen,
     menuLojaListarAdm(Usr).
 
 acaoMenuLojaListarAdm("2", Usr) :-
@@ -288,6 +306,7 @@ acaoMenuLojaListarAdm("2", Usr) :-
     string_to_atom(CategoriaCodes, Categoria),
     listarProdutosPorCategoria(Categoria),
     espera,
+    clear_screen,
     menuLojaListarAdm(Usr).
 
 acaoMenuLojaListarAdm("-", Usr) :- menuLojaAdm(Usr).
@@ -331,6 +350,7 @@ acaoMenuAssAdm("1", Usr) :-
     string_to_atom(AcessoCodes, Acesso),
     cadastraAssinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso),
     espera,
+    clear_screen,
     menuAssAdm(Usr).
 
 acaoMenuAssAdm("2", Usr) :-
@@ -339,11 +359,13 @@ acaoMenuAssAdm("2", Usr) :-
     string_to_atom(SiglaCodes, Sigla),
     removeAssinatura(Sigla),
     espera,
+    clear_screen,
     menuAssAdm(Usr).
 
 acaoMenuAssAdm("3", Usr) :-
     listarAssinaturas,
     espera,
+    clear_screen,
     menuAssAdm(Usr).
 
 acaoMenuAssAdm("-", Usr) :- menuAdm(Usr).
@@ -363,6 +385,7 @@ acaoMenuPer("3", Usr) :- menuTreinoPer(Usr).
 acaoMenuPer("4", Usr) :-
     mostrarPerfil(Usr),
     espera,
+    clear_screen,
     menuPer(Usr).
 acaoMenuPer("-", _) :- menuInicial.
 acaoMenuPer(_, Usr) :- menuPer(Usr).
@@ -388,6 +411,7 @@ acaoMenuTreinoPer("1", Usr) :-
     string_to_atom(ObservacoesCodes, Observacoes),
     cadastraFicha(Usr_cli, Usr, Exercicios, Observacoes),
     espera,
+    clear_screen,
     menuTreinoPer(Usr).
 
 acaoMenuTreinoPer("2", Usr) :-
@@ -395,13 +419,15 @@ acaoMenuTreinoPer("2", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id_ficha),
-    removeFichaTreino(Id),
+    removeFicha(Id),
     espera,
+    clear_screen,
     menuTreinoPer(Usr).
 
 acaoMenuTreinoPer("3", Usr) :-
-    listarFichaPersonal(Usr),
+    mostrarFichaPersonal(Usr),
     espera,
+    clear_screen,
     menuTreinoPer(Usr).
 
 acaoMenuTreinoPer("-", Usr) :- menuPer(Usr).
@@ -431,6 +457,7 @@ acaoMenuAvaliacaoPer("1", Usr) :-
     string_to_atom(DataCodes, Data_ava),
     cadastraAvaliacao(Cliente, Avaliacao, Observacoes, Data_ava),
     espera,
+    clear_screen,
     menuAvaliacaoPer(Usr).
 
 acaoMenuAvaliacaoPer("2", Usr) :-
@@ -440,11 +467,13 @@ acaoMenuAvaliacaoPer("2", Usr) :-
     atom_number(IdStr, Id_ava),
     removeAvaliacao(Id_ava),
     espera,
+    clear_screen,
     menuAvaliacaoPer(Usr).
 
 acaoMenuAvaliacaoPer("3", Usr) :-
-    listarAvaliacoesPersonal(Usr),
+    mostrarFichaPersonal(Usr),
     espera,
+    clear_screen,
     menuAvaliacaoPer(Usr).
 
 acaoMenuAvaliacaoPer("-", Usr) :- menuPer(Usr).
@@ -470,17 +499,18 @@ acaoMenuAulasPer("1", Usr) :-
     read_line_to_codes(user_input, LimiteCodes),
     string_to_atom(LimiteCodes, LimiteStr),
     atom_number(LimiteStr, Limite),
-    cadastraAula(Materia, DataHora, Limite),
+    cadastraAula(Materia, Usr, DataHora, Limite),
     espera,
+    clear_screen,
     menuAulasPer(Usr).
 
 acaoMenuAulasPer("2", Usr) :-
     writeln("Id: "),
     read_line_to_codes(user_input, IdCodes),
-    string_to_atom(IdCodes, IdStr),
-    atom_number(IdStr, Id),
+    string_to_atom(IdCodes, Id),
     removeAula(Id),
     espera,
+    clear_screen,
     menuAulasPer(Usr).
 
 acaoMenuAulasPer("3", Usr) :- menuListaAulaPer(Usr).
@@ -499,11 +529,13 @@ menuListaAulaPer(Usr) :-
 acaoMenuListaAulaPer("1", Usr) :-
     listarAulasPersonal(Usr),
     espera,
+    clear_screen,
     menuListaAulaPer(Usr).
 
 acaoMenuListaAulaPer("2", Usr) :-
     listarAulas,
     espera,
+    clear_screen,
     menuListaAulaPer(Usr).
 
 acaoMenuListaAulaPer("-", Usr) :- menuAulasPer(Usr).
@@ -520,13 +552,15 @@ menuCli(Usr) :-
 
 acaoMenuCli("1", Usr) :- menuAulasCli(Usr).
 acaoMenuCli("2", Usr) :-
-    listarFichaCliente(Usr),
+    mostrarFichaCliente(Usr),
     espera,
+    clear_screen,
     menuCli(Usr).
 
 acaoMenuCli("3", Usr) :-
     listarAvaliacoesCliente(Usr),
     espera,
+    clear_screen,
     menuCli(Usr).
 
 acaoMenuCli("4", Usr) :- menuMarketPlaceCli(Usr).
@@ -534,10 +568,12 @@ acaoMenuCli("5", Usr) :-
     readFile("data/Suporte.txt", Conteudo),
     writeln(Conteudo),
     espera,
+    clear_screen,
     menuCli(Usr).
 acaoMenuCli("6", Usr) :-
     mostrarPerfil(Usr),
     espera,
+    clear_screen,
     menuCli(Usr).
 acaoMenuCli("-", _) :- menuInicial.
 acaoMenuCli(_, Usr) :- menuCli(Usr).
@@ -558,6 +594,7 @@ acaoMenuAulasCli("1", Usr) :-
     atom_number(IdStr, Id),
     adicionarAulaExtra(Id, Usr),
     espera,
+    clear_screen,
     menuAulasCli(Usr).
 
 acaoMenuAulasCli("2", Usr) :-
@@ -567,6 +604,7 @@ acaoMenuAulasCli("2", Usr) :-
     atom_number(IdStr, Id),
     cancelarAula(Id, Usr),
     espera,
+    clear_screen,
     menuAulasCli(Usr).
 
 acaoMenuAulasCli("3", Usr) :- menuAulaListaCli(Usr).
@@ -585,11 +623,13 @@ menuAulasListarCli(Usr) :-
 acaoMenuAulasListarCli("1", Usr) :-
     listarAulasCliente(Usr),
     espera,
+    clear_screen,
     menuAulasListarCli(Usr).
 
 acaoMenuAulasListarCli("2", Usr) :-
     listarAulas,
     espera,
+    clear_screen,
     menuAulasListarCli(Usr).
 
 acaoMenuAulasListarCli("-", Usr) :- menuAulasCli(Usr).
@@ -608,6 +648,7 @@ acaoMenuMarketPlaceCli("1", Usr) :- menuMarcketPlaceListarProdCli(Usr).
 acaoMenuMarketPlaceCli("2", Usr) :- 
     listaProdutosCarrinho(Usr),
     espera,
+    clear_screen,
     menuMarketPlaceCli(Usr).
 acaoMenuMarketPlaceCli("3", Usr) :-
     writeln("Id do Produto: "),
@@ -616,6 +657,7 @@ acaoMenuMarketPlaceCli("3", Usr) :-
     atom_number(IdStr, Id),
     adicionarProdutoCarrinho(Id, Usr),
     espera,
+    clear_screen,
     menuMarketPlaceCli(Usr).
 acaoMenuMarketPlaceCli("4", Usr) :-
     writeln("Id do Produto: "),
@@ -624,13 +666,14 @@ acaoMenuMarketPlaceCli("4", Usr) :-
     atom_number(IdStr, Id),
     removerProdutoCarrinho(Id, Usr),
     espera,
+    clear_screen,
     menuMarketPlaceCli(Usr).
 acaoMenuMarketPlaceCli("5", Usr) :-
     writeln("Digite Enter Para Confirmar a Compra\nDigite - Para Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
     (Comando == '-' -> menuMarketPlaceCli(Usr) 
-    ; cadastraVenda(Usr), espera, menuMarketPlaceCli(Usr)).
+    ; cadastraVenda(Usr), espera, clear_screen, menuMarketPlaceCli(Usr)).
 
 acaoMenuMarketPlaceCli("-", Usr) :- menuCli(Usr).
 acaoMenuMarketPlaceCli(_, Usr) :- menuMarketPlaceCli(Usr).
@@ -647,6 +690,7 @@ menuMarcketPlaceListarProdCli(Usr) :-
 acaoMenuMarcketPlaceListarProdCli("1", Usr) :-
     listaProdutos,
     espera,
+    clear_screen,
     menuMarcketPlaceListarProdCli(Usr).
 
 acaoMenuMarcketPlaceListarProdCli("2", Usr) :-
@@ -655,6 +699,7 @@ acaoMenuMarcketPlaceListarProdCli("2", Usr) :-
     string_to_atom(CategoriaCodes, Categoria),
     listarProdutosPorCategoria(Categoria),
     espera,
+    clear_screen,
     menuMarcketPlaceListarProdCli(Usr).
 
 acaoMenuMarcketPlaceListarProdCli("-", Usr) :- menuMarketPlaceCli(Usr).

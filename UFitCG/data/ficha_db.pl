@@ -1,2 +1,2 @@
+:- dynamic(ficha_treino/5).
 fichaId(2).
-ficha_treino(1, "Clara", "Renaldo", "Costas e Pernas", "Treinar Pesado").
