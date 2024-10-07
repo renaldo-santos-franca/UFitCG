@@ -1,1 +1,4 @@
-carrinho(1, 10).
+:- dynamic carrinho/2.
+
+carrinho("Clara", 1).
+

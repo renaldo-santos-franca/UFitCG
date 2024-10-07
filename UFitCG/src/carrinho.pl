@@ -65,6 +65,7 @@ data_finaliza_compra(DataString) :-
 
 
 verifica_existencia_produto(IdProd, Resultado) :-
+    consult('data/loja_db.pl'),
     ( produto(IdProd, _, _, _, _) ->
         Resultado = 1
     ; Resultado = 0 ).
