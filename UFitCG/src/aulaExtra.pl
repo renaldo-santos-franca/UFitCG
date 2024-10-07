@@ -4,7 +4,6 @@
 :- dynamic aula/5.
 :- dynamic usuario/7.
 
-
 cadastraAula(Materia, Usr_per, Data_horario, Limite) :-
     (Limite =< 0 -> writeln("Limite Invalido")
     ; string_length(Data_horario, Len), Len \= 22 -> writeln("Horario Invalido")
@@ -14,7 +13,6 @@ cadastraAula(Materia, Usr_per, Data_horario, Limite) :-
     ).
 
 pegaIdAula(Id) :-
-    reconsult('data/aula_db.pl'),
     id_aula(Id).
 
 insertAula(Materia, Usr_per, Data_horario, Limite) :-
@@ -26,11 +24,9 @@ insertAula(Materia, Usr_per, Data_horario, Limite) :-
     incrementa_id_aula.
 
 verificaId(Id) :-
-    %reconsult('data/aula_db.pl'),
     aula(Id, _, _, _, _).
 
 incrementa_id_aula :-
-    reconsult('data/aula_db.pl'),
     id_aula(IdAtual),
     retract(id_aula(IdAtual)),
     NovoId is IdAtual + 1,
@@ -45,9 +41,7 @@ atualiza_arquivo_aula_db(NovoId) :-
     forall(aula(Id, Materia, Usr_per, Data_horario, Limite), format(StreamAula, 'aula(~w, "~w", "~w", "~w", ~w).~n', [Id, Materia, Usr_per, Data_horario, Limite])),
     close(StreamAula).
 
-
 listarAulas :-
-    %reconsult('data/aula_db.pl'),
     findall(aula(Id, Materia, Usr_per, Data_horario, Limite), aula(Id, Materia, Usr_per, Data_horario, Limite), Aulas),
     (Aulas \= [] -> mostrarListaAulas(Aulas)
     ; writeln('Nenhuma Aula Cadastrada')
@@ -62,11 +56,9 @@ mostrarListaAulas([aula(Id, Materia, Usr, Data_horario, Limite) | T]) :-
     write('Limite: '), writeln(Limite), nl,
     mostrarListaAulas(T).
 
-
 listarAulasPersonal(Usr) :-
-    %reconsult('data/aula_db.pl'),
     (   aula(_, _, Usr, _, _) -> 
-        forall((aula(Id, Materia, Usr, Data_horario, Limite)),
+        forall(aula(Id, Materia, Usr, Data_horario, Limite),
                format(' ID: ~w~n Matéria: ~w~n Usuário: ~w~n Data/Horário: ~w~n Limite: ~w~n~n', [Id, Materia, Usr, Data_horario, Limite]))
     ;   writeln('Nenhuma Aula Cadastrada')
     ).
@@ -74,7 +66,6 @@ listarAulasPersonal(Usr) :-
 removeAula(Id_str) :-
     atom_number(Id_str, Id),
     (verificaId(Id) -> 
-        %reconsult('data/aula_db.pl'),
         retract(aula(Id, Materia, Usr_per, Data_horario, Limite)),
         writeln('Aula removida com sucesso!'),
         atualizar_arquivo_aula_db
@@ -89,5 +80,4 @@ atualizar_arquivo_aula_db :-
     close(Stream).
 
 pegaInfoAula(Id, Materia, Personal, Data) :-
-    consult('data/aula_db.pl'),
     aula(Id, Materia, Personal, Data, _).
