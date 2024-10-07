@@ -478,7 +478,7 @@ acaoMenuAvaliacaoPer("2", Usr) :-
     menuAvaliacaoPer(Usr).
 
 acaoMenuAvaliacaoPer("3", Usr) :-
-    mostrarFichaPersonal(Usr),
+    mostrarAvaliacaoPersonal(Usr),
     espera,
     clear_screen,
     menuAvaliacaoPer(Usr).

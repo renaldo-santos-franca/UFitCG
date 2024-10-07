@@ -1,5 +1,5 @@
 :- dynamic(id_aula/1).
-id_aula(20).
+id_aula(21).
 aula(4, "capoeira", "geraldo", "11/11/1111 11.11,11.11", 12).
 aula(6, "cblol", "geraldo", "11/11/1111 11.11,12.11", 12).
 aula(7, "ping-pong", "geraldo", "11/11/1111 11.11,11.11", 10).
