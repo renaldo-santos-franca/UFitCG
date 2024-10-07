@@ -498,10 +498,10 @@ menuAulasPer(Usr) :-
 acaoMenuAulasPer("1", Usr) :-
     writeln("Materia: "),
     read_line_to_codes(user_input, MateriaCodes),
-    string_to_atom(MateriaCodes, Materia),
+    string_codes(Materia, MateriaCodes),
     writeln("Data e Horario: "),
     read_line_to_codes(user_input, DataHoraCodes),
-    string_to_atom(DataHoraCodes, DataHora),
+    string_codes(DataHora, DataHoraCodes),
     writeln("Limite de Alunos: "),
     read_line_to_codes(user_input, LimiteCodes),
     string_to_atom(LimiteCodes, LimiteStr),

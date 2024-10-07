@@ -5,6 +5,7 @@
 :- dynamic usuario/7.
 
 cadastraAula(Materia, Usr_per, Data_horario, Limite) :-
+    reconsult('data/aula_db.pl'),
     (Limite =< 0 -> writeln("Limite Invalido")
     ; string_length(Data_horario, Len), Len \= 22 -> writeln("Horario Invalido")
     ; \+ verfivaPersonal(Usr_per) -> writeln("Usuario Invalido")
@@ -42,6 +43,7 @@ atualiza_arquivo_aula_db(NovoId) :-
     close(StreamAula).
 
 listarAulas :-
+    reconsult('data/aula_db.pl'),
     findall(aula(Id, Materia, Usr_per, Data_horario, Limite), aula(Id, Materia, Usr_per, Data_horario, Limite), Aulas),
     (Aulas \= [] -> mostrarListaAulas(Aulas)
     ; writeln('Nenhuma Aula Cadastrada')
@@ -57,6 +59,7 @@ mostrarListaAulas([aula(Id, Materia, Usr, Data_horario, Limite) | T]) :-
     mostrarListaAulas(T).
 
 listarAulasPersonal(Usr) :-
+    reconsult('data/aula_db.pl'),
     (   aula(_, _, Usr, _, _) -> 
         forall(aula(Id, Materia, Usr, Data_horario, Limite),
                format(' ID: ~w~n Matéria: ~w~n Usuário: ~w~n Data/Horário: ~w~n Limite: ~w~n~n', [Id, Materia, Usr, Data_horario, Limite]))
@@ -64,6 +67,7 @@ listarAulasPersonal(Usr) :-
     ).
 
 removeAula(Id_str) :-
+    reconsult('data/aula_db.pl'),
     atom_number(Id_str, Id),
     (verificaId(Id) -> 
         retract(aula(Id, Materia, Usr_per, Data_horario, Limite)),
