@@ -49,7 +49,6 @@ atualizar_arquivo :-
     close(Stream).
 
 listar_produtos :- 
-    consult('data/loja_db.pl'),
     findall(produto(Id, Nome, Valor, Descricao, Categorias), produto(Id, Nome, Valor, Descricao, Categorias), Produtos),
     (Produtos \= [] -> print_produto(Produtos)
     ; write('Nenhum Produto encontrado!'), nl).

@@ -112,6 +112,6 @@ atualizaBaseDeDados :-
             usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), 
             Usuarios),
     forall(member(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario), Usuarios),
-           format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', 
+           format(Stream, 'usuario("~w", "~w", "~w", "~w", "~w", "~w", ~w).~n', 
                   [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario])),
     close(Stream).

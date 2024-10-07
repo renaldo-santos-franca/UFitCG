@@ -24,7 +24,7 @@ pega_id(Id) :-
         retractall(venda_id(_)),
         assertz(venda_id(Id))
     )),
-    atualiza_base_de_dados.
+    atualizaBaseDeDados.
 
 
 atualizaBaseDeDados :-

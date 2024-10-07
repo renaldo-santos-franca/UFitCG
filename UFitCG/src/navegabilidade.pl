@@ -268,12 +268,15 @@ acaoMenuLojaAdm("1", Usr) :-
     menuLojaAdm(Usr).
 
 acaoMenuLojaAdm("2", Usr) :-
-    writeln("Categoria: "),
-    read_line_to_string(user_input, Categoria),
-    listar_produtos_por_categoria(Categoria),
+    writeln("Id: "),
+    read_line_to_string(user_input, Idcode),
+    string_codes(IdStr, Idcode),
+    string_to_atom(IdStr, IdAtom),
+    atom_number(IdAtom, Id),
+    remove_produto(Id),
     espera,
     clear_screen,
-    menuLojaListarAdm(Usr).
+    menuLojaAdm(Usr).
 
 acaoMenuLojaAdm("3", Usr) :-
     menuLojaListarAdm(Usr).
