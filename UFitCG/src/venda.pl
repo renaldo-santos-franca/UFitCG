@@ -49,10 +49,10 @@ cadastrar_venda(Usr, Res) :-
         Res = 'Compra Efetuada'
     ).
 
-verifica_produto_carrinho(Usr, Count) :-
-    findall(_, carrinho(Usr, _), Carrinho),
-    length(Carrinho, Count).
-
+verifica_produto_carrinho(Usr, Res) :-
+    findall(Produto, carrinho(Usr, Produto), ProdutosNoCarrinho),
+    ( length(ProdutosNoCarrinho) > 0 -> Res = 'Carrinho não está vazio' ; Res = 'Carrinho vazio' ).
+    
 filtrar_vendas(Usr) :-
     findall(venda(Id, Produtos, Usr, DataHorario, ValorTotal), venda(Id, Produtos, Usr, DataHorario, ValorTotal), VendasUsr),
     maplist(format_venda, VendasUsr).
