@@ -1,7 +1,20 @@
-:- module(carrinho, [adiciona_produto_carrinho/3, deletar_carrinho/1, deletar_produto_carrinho/2, listar_produtos_carrinho/1, valor_compra/2, finaliza_compra/2, data_finaliza_compra/1]).
+:- module(carrinho, [verifica_produto_carrinho/2, adiciona_produto_carrinho/3, deletar_carrinho/1, deletar_produto_carrinho/2, listar_produtos_carrinho/1, valor_compra/2, finaliza_compra/2, data_finaliza_compra/1, load_carrinho_db/0, deletar_carrinho/1]).
 :- dynamic carrinho/2.
 :- use_module(usuario).
+:- use_module(loja).
 
+:- initialization(load_carrinho_db).
+
+load_carrinho_db :-
+    retractall(carrinho(_, _)),
+    ( exists_file('data/carrinho_db.pl') ->
+        consult('data/carrinho_db.pl')
+    ; true ).
+
+verifica_produto_carrinho(Usr, Count) :-
+    
+    findall(_, carrinho(Usr, _), Carrinho),
+    length(Carrinho, Count).
 
 
 save_carrinho_db :-
@@ -54,7 +67,7 @@ finaliza_compra(UsrCli, Resultado) :-
     ( TodosProd == '' ->
         Resultado = 'Carrinho Vazio!'
     ; valor_compra(UsrCli, Total),
-      format(atom(Resultado), 'Produtos: ~w. Total: ~2f', [TodosProd, Total]),
+      format(string(Resultado), 'Produtos: ~w. Total: ~2f', [TodosProd, Total]),
       deletar_carrinho(UsrCli)
     ).
 

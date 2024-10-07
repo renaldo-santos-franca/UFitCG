@@ -1,43 +1,43 @@
 :- module(venda, [cadastrar_venda/1, filtrar_vendas/1, remove_venda_loja/2, listar_vendas/0]).
 :- use_module(library(persistency)).
 :- use_module(library(date)).
-:- use_module(carrinho, [finaliza_compra/2]).
+:- use_module(carrinho, [deletar_carrinho/1, verifica_produto_carrinho/2, finaliza_compra/2, valor_compra/2, load_carrinho_db/0, carrinho/2]).
+
+:- dynamic venda_id/1.
+:- dynamic venda/5.
 
 :- persistent
     venda(id:integer, produtos:string, usr:string, data_horario:string, valor_total:float).
 
-:- initialization(load_carrinho_db).
+:- initialization(init_venda_db).
 
-load_carrinho_db :-
-    retractall(carrinho(_, _)),
-    ( exists_file('data/carrinho_db.pl') ->
-        consult('data/carrinho_db.pl')
-    ; true ).
+init_venda_db :-
+    load_carrinho_db,
+    db_attach('data/vendasLoja_db.pl', []).
 
 pega_id(Id) :-
-    consult('data/vendaloja_db.pl'),
-    venda_id(Id),
-    retract(venda_id(Id)),
-    IdNovo is Id + 1,
-    assertz(venda_id(IdNovo)),
+    (   venda_id(MaxId)
+    ->  Id is MaxId + 1
+    ;   Id = 1
+    ),
+    with_mutex(vendas_db, (
+        retractall(venda_id(_)),
+        assertz(venda_id(Id))
+    )),
     atualiza_base_de_dados.
 
 atualiza_base_de_dados :-
-    open('data/vendaloja_db.pl', write, Stream),
+    open('data/vendasLoja_db.pl', write, Stream),
+    format(Stream, ':- dynamic(venda_id/1).~n', []),
 
-    findall(venda_id(IdVenda),
-            venda_id(IdVenda), 
-            Ids),
+    findall(venda_id(IdVenda), venda_id(IdVenda), Ids),
     forall(member(venda_id(IdVenda), Ids),
-           format(Stream, 'venda_id(~w).~n', 
-                  [IdVenda])),
-    
+           format(Stream, 'venda_id(~w).~n', [IdVenda])),
+
     findall(venda(Id, Produtos, Usr, DataHorario, ValorTotal),
-            venda(Id, Produtos, Usr, DataHorario, ValorTotal), 
-            Vendas),
+            venda(Id, Produtos, Usr, DataHorario, ValorTotal), Vendas),
     forall(member(venda(Id, Produtos, Usr, DataHorario, ValorTotal), Vendas),
-           format(Stream, 'venda(~w, "~w", "~w", "~w", ~2f).~n', 
-                  [Id, Produtos, Usr, DataHorario, ValorTotal])),
+           format(Stream, 'venda(~w, "~w", "~w", "~w", ~2f).~n', [Id, Produtos, Usr, DataHorario, ValorTotal])),
     close(Stream).
 
 cadastrar_venda(Usr) :-
@@ -46,21 +46,17 @@ cadastrar_venda(Usr) :-
     ->  writeln('Carrinho Vazio')
     ;   finaliza_compra(Usr, Produtos),
         get_time(TimeStamp),
-        format_time(atom(DataAtual), '%Y-%m-%d %H:%M:%S', TimeStamp),
-        valor_compra(Usr, ValorTotal),
+        format_time(string(DataAtual), '%Y-%m-%d %H:%M:%S', TimeStamp),
+        valor_compra(Usr, ValorTotalInt),
+        ValorTotal is float(ValorTotalInt),
         pega_id(Id),
         with_mutex(vendas_db, assert_venda(Id, Produtos, Usr, DataAtual, ValorTotal)),
-        open('data/vendaloja_db.pl', append, Stream),
-        format(Stream, 'venda(~w, "~w", "~w", "~w", ~2f).~n', [Id, Produtos, Usr, DataAtual, ValorTotal]),
-        close(Stream),
         deletar_carrinho(Usr),
         writeln('Compra Efetuada')
     ).
 
-verifica_produto_carrinho(Usr, Count) :-
-    consult('data/carrinho_db.pl'),
-    findall(_, carrinho(Usr, _), Carrinho),
-    length(Carrinho, Count).
+assert_venda(Id, Produtos, Usr, DataHorario, ValorTotal) :-
+    assertz(venda(Id, Produtos, Usr, DataHorario, ValorTotal)).
 
 filtrar_vendas(Usr) :-
     findall(venda(Id, Produtos, Usr, DataHorario, ValorTotal), venda(Id, Produtos, Usr, DataHorario, ValorTotal), VendasUsr),
