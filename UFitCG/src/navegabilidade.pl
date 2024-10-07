@@ -6,6 +6,8 @@
 :- use_module(loja).
 :- use_module(aulaCliente).
 :- use_module(assinatura).
+:- use_module(carrinho).
+:- use_module(venda).
 %clear_screen :- write('').
 clear_screen :- write('\e[H\e[2J').
 
@@ -663,7 +665,7 @@ menuMarketPlaceCli(Usr) :-
 
 acaoMenuMarketPlaceCli("1", Usr) :- menuMarcketPlaceListarProdCli(Usr).
 acaoMenuMarketPlaceCli("2", Usr) :- 
-    listaProdutosCarrinho(Usr),
+    listar_produtos_carrinho(Usr),
     espera,
     clear_screen,
     menuMarketPlaceCli(Usr).
@@ -672,7 +674,8 @@ acaoMenuMarketPlaceCli("3", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id),
-    adicionarProdutoCarrinho(Id, Usr),
+    adiciona_produto_carrinho(Usr, Id, Resultado),
+    writeln(Resultado),
     espera,
     clear_screen,
     menuMarketPlaceCli(Usr).
@@ -681,7 +684,7 @@ acaoMenuMarketPlaceCli("4", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id),
-    removerProdutoCarrinho(Id, Usr),
+    deletar_produto_carrinho(Usr, Id),
     espera,
     clear_screen,
     menuMarketPlaceCli(Usr).
@@ -690,7 +693,7 @@ acaoMenuMarketPlaceCli("5", Usr) :-
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
     (Comando == '-' -> menuMarketPlaceCli(Usr) 
-    ; cadastraVenda(Usr), espera, clear_screen, menuMarketPlaceCli(Usr)).
+    ; cadastrar_venda(Usr), espera, clear_screen, menuMarketPlaceCli(Usr)).
 
 acaoMenuMarketPlaceCli("-", Usr) :- menuCli(Usr).
 acaoMenuMarketPlaceCli(_, Usr) :- menuMarketPlaceCli(Usr).

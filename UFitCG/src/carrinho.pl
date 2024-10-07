@@ -1,23 +1,17 @@
+:- module(carrinho, [adiciona_produto_carrinho/3, deletar_carrinho/1, deletar_produto_carrinho/2, listar_produtos_carrinho/1, valor_compra/2, finaliza_compra/2, data_finaliza_compra/1]).
 :- dynamic carrinho/2.
+:- use_module(usuario).
 
-% Load existing facts from the file
-:- initialization(load_carrinho_db).
 
-load_carrinho_db :-
-    retractall(carrinho(_, _)),
-    ( exists_file('../data/carrinho_db.pl') ->
-        consult('../data/carrinho_db.pl')
-    ; true ).
 
 save_carrinho_db :-
-    tell('../data/carrinho_db.pl'),
+    tell('data/carrinho_db.pl'),
     listing(carrinho/2),
     told.
 
 adiciona_produto_carrinho(UsrCli, IdProd, Resultado) :-
-    verifica_existencia(UsrCli, VerificaUsr),
     verifica_existencia_produto(IdProd, VerificaProduto),
-    ( VerificaUsr < 1 ->
+    ( \+ verificaExistenciaUsuario(UsrCli) ->
         Resultado = 'Usuario Inexistente!'
     ; VerificaProduto < 1 ->
         Resultado = 'Produto Inexistente!'
@@ -31,19 +25,18 @@ deletar_carrinho(UsrCli) :-
     save_carrinho_db,
     writeln('Todos os Produtos Foram Excluidos do Seu Carrinho').
 
-deletar_produto_carrinho(UsrCli, IdProd, Resultado) :-
+deletar_produto_carrinho(UsrCli, IdProd) :-
     ( retract(carrinho(UsrCli, IdProd)) ->
         save_carrinho_db,
-        Resultado = 'Produto Excluido do Seu Carrinho!'
-    ; Resultado = 'Produto Não Encontrado no Seu Carrinho!'
+        writeln('Produto Excluido do Seu Carrinho!')
+    ; writeln('Produto Não Encontrado no Seu Carrinho!')
     ).
 
 listar_produtos_carrinho(UsrCli) :-
     forall(carrinho(UsrCli, IdProd), print_produto(IdProd)).
 
 print_produto(IdProd) :-
-    % Assuming you have a way to get product details by IdProd
-    get_product_details(IdProd, Nome, Valor, Descricao, Categorias),
+    pega_detalhes_produto(IdProd, Nome, Valor, Descricao, Categorias),
     format('Id: ~w~n', [IdProd]),
     format('Nome do Produto: ~w~n', [Nome]),
     format('Preço: ~w~n', [Valor]),
@@ -52,15 +45,17 @@ print_produto(IdProd) :-
     nl.
 
 valor_compra(UsrCli, Total) :-
-    findall(Valor, (carrinho(UsrCli, IdProd), get_product_value(IdProd, Valor)), Valores),
+    findall(Valor, (carrinho(UsrCli, IdProd), pega_valor_produto(IdProd, Valor)), Valores),
     sum_list(Valores, Total).
 
 finaliza_compra(UsrCli, Resultado) :-
-    findall(Nome, (carrinho(UsrCli, IdProd), get_product_name(IdProd, Nome)), NomesProdutos),
+    findall(Nome, (carrinho(UsrCli, IdProd), pega_nome Produto(IdProd, Nome)), NomesProdutos),
     atomic_list_concat(NomesProdutos, ', ', TodosProd),
     ( TodosProd == '' ->
-        Resultado = ''
-    ; atom_concat(TodosProd, '.', Resultado)
+        Resultado = 'Carrinho Vazio!'
+    ; valor_compra(UsrCli, Total),
+      format(atom(Resultado), 'Produtos: ~w. Total: ~2f', [TodosProd, Total]),
+      deletar_carrinho(UsrCli)
     ).
 
 data_finaliza_compra(DataString) :-
@@ -68,19 +63,31 @@ data_finaliza_compra(DataString) :-
     stamp_date_time(Timestamp, DateTime, local),
     format_time(atom(DataString), '%d-%m-%Y %H:%M', DateTime).
 
-% Dummy implementations for verifica_existencia and verifica_existencia_produto
-verifica_existencia(_, 1).
-verifica_existencia_produto(_, 1).
 
-% Dummy implementation for get_product_details
-get_product_details(IdProd, Nome, Valor, Descricao, Categorias) :-
-    Nome = 'Produto Exemplo',
-    Valor = 100,
-    Descricao = 'Descricao Exemplo',
-    Categorias = 'Categoria Exemplo'.
+verifica_existencia_produto(IdProd, Resultado) :-
+    ( produto(IdProd, _, _, _, _) ->
+        Resultado = 1
+    ; Resultado = 0 ).
 
-% Dummy implementation for get_product_value
-get_product_value(_, 100).
 
-% Dummy implementation for get_product_name
-get_product_name(_, 'Produto Exemplo').
+pega_detalhes_produto(IdProd, Nome, Valor, Descricao, Categorias) :-
+    ( produto(IdProd, Nome, Valor, Descricao, Categorias) ->
+        true
+    ; Nome = 'Produto Não Encontrado',
+      Valor = 0,
+      Descricao = 'N/A',
+      Categorias = 'N/A'
+    ).
+
+
+pega_valor_produto(IdProd, Valor) :-
+    ( produto(IdProd, _, Valor, _, _) ->
+        true
+    ; Valor = 0
+    ).
+
+pega_nome Produto(IdProd, Nome) :-
+    ( produto(IdProd, Nome, _, _, _) ->
+        true
+    ; Nome = 'Produto Não Encontrado'
+    ).

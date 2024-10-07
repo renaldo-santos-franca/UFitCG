@@ -1,13 +1,21 @@
+:- module(venda, [cadastrar_venda/1, filtrar_vendas/1, remove_venda_loja/2, listar_vendas/0]).
 :- use_module(library(persistency)).
 :- use_module(library(date)).
+:- use_module(carrinho, [finaliza_compra/2]).
 
 :- persistent
     venda(id:integer, produtos:string, usr:string, data_horario:string, valor_total:float).
 
-:- initialization(db_attach('../data/vendaloja_db.pl', [])).
+:- initialization(load_carrinho_db).
+
+load_carrinho_db :-
+    retractall(carrinho(_, _)),
+    ( exists_file('data/carrinho_db.pl') ->
+        consult('data/carrinho_db.pl')
+    ; true ).
 
 pega_id(Id) :-
-    consult('../data/vendaloja_db.pl'),
+    consult('data/vendaloja_db.pl'),
     venda_id(Id),
     retract(venda_id(Id)),
     IdNovo is Id + 1,
@@ -15,7 +23,7 @@ pega_id(Id) :-
     atualiza_base_de_dados.
 
 atualiza_base_de_dados :-
-    open('../data/vendaloja_db.pl', write, Stream),
+    open('data/vendaloja_db.pl', write, Stream),
 
     findall(venda_id(IdVenda),
             venda_id(IdVenda), 
@@ -32,27 +40,28 @@ atualiza_base_de_dados :-
                   [Id, Produtos, Usr, DataHorario, ValorTotal])),
     close(Stream).
 
-cadastrar_venda(Usr, Res) :-
+cadastrar_venda(Usr) :-
     verifica_produto_carrinho(Usr, VeriCar),
     (   VeriCar =:= 0
-    ->  Res = 'Carrinho Vazio'
+    ->  writeln('Carrinho Vazio')
     ;   finaliza_compra(Usr, Produtos),
         get_time(TimeStamp),
         format_time(atom(DataAtual), '%Y-%m-%d %H:%M:%S', TimeStamp),
         valor_compra(Usr, ValorTotal),
         pega_id(Id),
         with_mutex(vendas_db, assert_venda(Id, Produtos, Usr, DataAtual, ValorTotal)),
-        open('../data/vendaloja_db.pl', append, Stream),
+        open('data/vendaloja_db.pl', append, Stream),
         format(Stream, 'venda(~w, "~w", "~w", "~w", ~2f).~n', [Id, Produtos, Usr, DataAtual, ValorTotal]),
         close(Stream),
         deletar_carrinho(Usr),
-        Res = 'Compra Efetuada'
+        writeln('Compra Efetuada')
     ).
 
-verifica_produto_carrinho(Usr, Res) :-
-    findall(Produto, carrinho(Usr, Produto), ProdutosNoCarrinho),
-    ( length(ProdutosNoCarrinho) > 0 -> Res = 'Carrinho não está vazio' ; Res = 'Carrinho vazio' ).
-    
+verifica_produto_carrinho(Usr, Count) :-
+    consult('data/carrinho_db.pl'),
+    findall(_, carrinho(Usr, _), Carrinho),
+    length(Carrinho, Count).
+
 filtrar_vendas(Usr) :-
     findall(venda(Id, Produtos, Usr, DataHorario, ValorTotal), venda(Id, Produtos, Usr, DataHorario, ValorTotal), VendasUsr),
     maplist(format_venda, VendasUsr).
