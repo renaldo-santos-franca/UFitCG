@@ -2,7 +2,6 @@
 :- ['data/ficha_db.pl'].
 :- ['src/usuario.pl'].
 :- dynamic(ficha_treino/5).
-:- dynamic(fichaId/1).
 
 cadastraFicha(Usr_cli, Usr_per, Exercicios, Observacoes) :-
     (verificaExistenciaCliente(Usr_cli) -> 
@@ -62,9 +61,10 @@ mostrarListaFichas([ficha_treino(Id, Usr_cli, Usr_per, Exercicios, Observacoes) 
 
 atualizaBaseDeDados :-
     open('data/ficha_db.pl', write, Stream),
+    format(Stream, ':- dynamic(fichaId/1).~n', []),
     format(Stream, ':- dynamic(ficha_treino/5).~n', []),
-    findall(fichaId(IdFicha), fichaId(IdFicha), Ids),
-    forall(member(IdFicha, Ids), format(Stream, 'fichaId(~w).~n', [IdFicha])),
+    
+    forall(fichaId(IdF), format(Stream, 'fichaId(~w).~n', [IdF])),
     findall(ficha_treino(Id, Usr_cli, Usr_per, Exercicios, Observacoes), ficha_treino(Id, Usr_cli, Usr_per, Exercicios, Observacoes), Fichas),
     forall(member(ficha_treino(Id, Usr_cli, Usr_per, Exercicios, Observacoes), Fichas), 
            format(Stream, 'ficha_treino(~w, "~w", "~w", "~w", "~w").~n', [Id, Usr_cli, Usr_per, Exercicios, Observacoes])),

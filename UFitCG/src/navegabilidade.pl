@@ -425,7 +425,7 @@ acaoMenuTreinoPer("2", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id_ficha),
-    removeFicha(Id),
+    removeFicha(Id_ficha),
     espera,
     clear_screen,
     menuTreinoPer(Usr).
