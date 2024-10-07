@@ -1,7 +1,7 @@
 :- module(carrinho, [verifica_produto_carrinho/2, adiciona_produto_carrinho/3, deletar_carrinho/1, deletar_produto_carrinho/2, listar_produtos_carrinho/1, valor_compra/2, finaliza_compra/2, data_finaliza_compra/1, load_carrinho_db/0, deletar_carrinho/1]).
-:- dynamic carrinho/2.
-:- use_module(usuario).
-:- use_module(loja).
+:- dynamic carrinho/3.
+:- use_module(usuario, [verificaExistenciaUsuario/1]).
+:- use_module(loja, [verificaId/1, produto/4]).
 
 :- initialization(load_carrinho_db).
 
@@ -19,18 +19,24 @@ verifica_produto_carrinho(Usr, Count) :-
 
 save_carrinho_db :-
     tell('data/carrinho_db.pl'),
-    listing(carrinho/2),
+    listing(carrinho/3),
     told.
 
 adiciona_produto_carrinho(UsrCli, IdProd, Resultado) :-
-    verifica_existencia_produto(IdProd, VerificaProduto),
     ( \+ verificaExistenciaUsuario(UsrCli) ->
         Resultado = 'Usuario Inexistente!'
-    ; VerificaProduto < 1 ->
+    ; \+ verificaId(IdProd) ->
         Resultado = 'Produto Inexistente!'
-    ; assertz(carrinho(UsrCli, IdProd)),
+    ; gera_id_carrinho(IdCarrinho),
+      assertz(carrinho(IdCarrinho, UsrCli, IdProd)),
       save_carrinho_db,
       Resultado = 'Produto Adicionado ao Carrinho!'
+    ).
+
+gera_id_carrinho(IdCarrinho) :-
+    ( aggregate_all(max(Id), carrinho(Id, _, _), MaxId) ->
+        IdCarrinho is MaxId + 1
+    ; IdCarrinho = 1
     ).
 
 deletar_carrinho(UsrCli) :-
@@ -39,7 +45,7 @@ deletar_carrinho(UsrCli) :-
     writeln('Todos os Produtos Foram Excluidos do Seu Carrinho').
 
 deletar_produto_carrinho(UsrCli, IdProd) :-
-    ( retract(carrinho(UsrCli, IdProd)) ->
+    ( retract(carrinho(_, UsrCli, IdProd)) ->
         save_carrinho_db,
         writeln('Produto Excluido do Seu Carrinho!')
     ; writeln('Produto Não Encontrado no Seu Carrinho!')
@@ -77,11 +83,6 @@ data_finaliza_compra(DataString) :-
     format_time(atom(DataString), '%d-%m-%Y %H:%M', DateTime).
 
 
-verifica_existencia_produto(IdProd, Resultado) :-
-    consult('data/loja_db.pl'),
-    ( produto(IdProd, _, _, _, _) ->
-        Resultado = 1
-    ; Resultado = 0 ).
 
 
 pega_detalhes_produto(IdProd, Nome, Valor, Descricao, Categorias) :-
