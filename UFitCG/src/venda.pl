@@ -1,4 +1,4 @@
-:- module(venda, [cadastrar_venda/1, filtrar_vendas/1, remove_venda_loja/2, listar_vendas/0]).
+:- module(venda, [cadastrar_venda/1, filtrar_vendas/1, remove_venda_loja/1, listar_vendas/0]).
 :- use_module(library(persistency)).
 :- use_module(library(date)).
 :- use_module(carrinho, [deletar_carrinho/1, verifica_produto_carrinho/2, finaliza_compra/2, valor_compra/2, load_carrinho_db/0, carrinho/2]).
@@ -26,10 +26,10 @@ pega_id(Id) :-
     )),
     atualiza_base_de_dados.
 
-atualiza_base_de_dados :-
-    open('data/vendasLoja_db.pl', write, Stream),
-    format(Stream, ':- dynamic(venda_id/1).~n', []),
 
+atualizaBaseDeDados :-
+    open('data/vendasLoja_db.pl', write, Stream),
+    
     findall(venda_id(IdVenda), venda_id(IdVenda), Ids),
     forall(member(venda_id(IdVenda), Ids),
            format(Stream, 'venda_id(~w).~n', [IdVenda])),
@@ -39,6 +39,7 @@ atualiza_base_de_dados :-
     forall(member(venda(Id, Produtos, Usr, DataHorario, ValorTotal), Vendas),
            format(Stream, 'venda(~w, "~w", "~w", "~w", ~2f).~n', [Id, Produtos, Usr, DataHorario, ValorTotal])),
     close(Stream).
+
 
 cadastrar_venda(Usr) :-
     verifica_produto_carrinho(Usr, VeriCar),
@@ -59,35 +60,40 @@ assert_venda(Id, Produtos, Usr, DataHorario, ValorTotal) :-
     assertz(venda(Id, Produtos, Usr, DataHorario, ValorTotal)).
 
 filtrar_vendas(Usr) :-
-    findall(venda(Id, Produtos, Usr, DataHorario, ValorTotal), venda(Id, Produtos, Usr, DataHorario, ValorTotal), VendasUsr),
-    maplist(format_venda, VendasUsr).
+    consult('data/vendasLoja_db.pl'),
+    findall(venda(Id, Produto, Usr, DataVenda, Valor), venda(Id, Produto, Usr, DataVenda, Valor), Vendas),
+    (Vendas \= [] -> print_vendas(Vendas)
+    ; write('Nenhuma venda encontrada!'), nl).
 
 quantidade_vendas_loja(IdVen, Count) :-
     findall(_, venda(IdVen, _, _, _, _), Vendas),
     length(Vendas, Count).
 
-verifica_venda_loja(IdVen, Exists) :-
-    quantidade_vendas_loja(IdVen, Count),
-    (   Count =:= 1
-    ->  Exists = true
-    ;   Exists = false
+verifica_venda_loja(Id):-
+    consult('data/vendasLoja_db.pl'),
+    venda(Id, _, _, _, _).
+
+remove_venda_loja(Id) :-
+    (verifica_venda_loja(Id) ->
+        retract(venda(Id, _, _, _, _)),
+        write('Venda apagada com sucesso!'), nl,
+        atualizaBaseDeDados 
+    ; 
+        write('Venda não encontrada!'), nl
     ).
 
-remove_venda_loja(IdVen, Res) :-
-    verifica_venda_loja(IdVen, Exists),
-    (   Exists
-    ->  with_mutex(vendas_db, retractall_venda(IdVen, _, _, _, _)),
-        Res = 'Venda Removida Com Sucesso'
-    ;   Res = 'Venda Não Cadastrada'
-    ).
 
-listar_vendas :-
-    findall(venda(Id, Produtos, Usr, DataHorario, ValorTotal), venda(Id, Produtos, Usr, DataHorario, ValorTotal), Vendas),
-    maplist(format_venda, Vendas).
+listar_vendas :- 
+    consult('data/vendasLoja_db.pl'),
+    findall(venda(Id, Produto, Usr, DataVenda, Valor), venda(Id, Produto, Usr, DataVenda, Valor), Vendas),
+    (Vendas \= [] -> print_vendas(Vendas)
+    ; write('Nenhuma venda encontrada!'), nl).
 
-format_venda(venda(Id, Produto, Usr, DataVenda, Valor)) :-
+print_vendas([]).
+print_vendas([venda(Id, Produto, Usr, DataVenda, Valor) | Resto]) :-
     format('Id: ~w~n', [Id]),
     format('Produto: ~w~n', [Produto]),
     format('Usuario: ~w~n', [Usr]),
     format('Data: ~w~n', [DataVenda]),
-    format('Valor: ~2f~n~n', [Valor]).
+    format('Valor: ~2f~n~n', [Valor]),
+    print_vendas(Resto).

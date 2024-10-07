@@ -48,32 +48,24 @@ atualizar_arquivo :-
     ),
     close(Stream).
 
-listar_produtos :-
+listar_produtos :- 
     consult('data/loja_db.pl'),
-    (   produto(_, _, _, _, _) ->  
-        forall(produto(Id, Nome, Valor, Descricao, Categorias),  
-            print_produto(Id, Nome, Valor, Descricao, Categorias) 
-        )
-    ;   writeln('Nenhum produto cadastrado.') 
-    ).
+    findall(produto(Id, Nome, Valor, Descricao, Categorias), produto(Id, Nome, Valor, Descricao, Categorias), Produtos),
+    (Produtos \= [] -> print_produto(Produtos)
+    ; write('Nenhum Produto encontrado!'), nl).
 
-print_produto(Id, Nome, Valor, Descricao, Categorias) :-
+print_produto([]).
+print_produto([produto(Id, Nome, Valor, Descricao, Categorias) | Resto]) :-
     format('Id: ~w~n', [Id]),
     format('Nome: ~w~n', [Nome]),
     format('Valor: ~2f~n', [Valor]),
     format('Descrição: ~w~n', [Descricao]),
     format('Categorias: ~w~n', [Categorias]),
-    writeln('--------------------------').
+    writeln('--------------------------'),
+    print_produto(Resto).
 
-
-listar_produtos_por_categoria(Categoria) :-
+listar_produtos_por_categoria(Cat) :-
     consult('data/loja_db.pl'),
-    (   produto(_, _, _, _, Categorias),
-        sub_atom(Categorias, _, _, _, Categoria)  % Verifica se a categoria está na string de categorias
-    ->  forall(
-            (produto(Id, Nome, Valor, Descricao, Categorias),
-            sub_atom(Categorias, _, _, _, Categoria)),
-            print_produto(Id, Nome, Valor, Descricao, Categorias)
-        )
-    ;   format('Nenhum produto encontrado na categoria "~w".~n', [Categoria])
-    ).
+    findall(produto(Id, Nome, Valor, Descricao, Cat), produto(Id, Nome, Valor, Descricao, Cat), Produtos),
+    (Produtos \= [] -> print_produto(Produtos)
+    ; write('Nenhum produto encontrado para a categoria!'), nl).

@@ -88,23 +88,22 @@ menuVendasLojaAdm(Usr) :-
 
 acaoMenuVendasLojaAdm("1", Usr) :-
     write("Cliente: "),
-    read_line_to_codes(user_input, ClienteCodes),
-    string_to_atom(ClienteCodes, Cliente),
-    filtrarVendas(Cliente),
+    read_line_to_string(user_input, Cliente),
+    filtrar_vendas(Cliente),
     espera,
     clear_screen,
     menuVendasLojaAdm(Usr).
 acaoMenuVendasLojaAdm("2", Usr) :-
     write("Id: "),
     read_line_to_codes(user_input, IdCodes),
-    string_to_atom(IdCodes, Id),
-    removeVendaLoja(Id, Mensagem),
-    writeln(Mensagem),
+    string_codes(IdCodes, IdString),
+    number_string(Id, IdString),
+    remove_venda_loja(Id),
     espera,
     clear_screen,
     menuVendasLojaAdm(Usr).
 acaoMenuVendasLojaAdm("3", Usr) :-
-    listarVendas,
+    listar_vendas,
     espera,
     clear_screen,
     menuVendasLojaAdm(Usr).
@@ -122,23 +121,20 @@ menuVendasAdm(Usr) :-
 
 acaoMenuVendasAdm("1", Usr) :-
     write("Cliente: "),
-    read_line_to_codes(user_input, ClienteCodes),
-    string_to_atom(ClienteCodes, Cliente),
+    read_line_to_string(user_input, Cliente),
     write("Tipo de Assinatura: "),
-    read_line_to_codes(user_input, TipoAssCodes),
-    string_to_atom(TipoAssCodes, TipoAss),
+    read_line_to_string(user_input, TipoAss),
     write("Tipo Parcela: "),
     read_line_to_codes(user_input, TipoParcelaCodes),
     string_to_atom(TipoParcelaCodes, TipoParcela),
     write("Parcelas Pagas: "),
-    read_line_to_codes(user_input, ParcelasPagasCodes),
-    string_to_atom(ParcelasPagasCodes, ParcelasPagasStr),
-    atom_number(ParcelasPagasStr, ParcelasPagas),
+    read_line_to_codes(user_input, ParcelasCode),
+    string_codes(ParcelasStr, ParcelasCode),
+    string_to_atom(ParcelasStr, ParcelasPagas),
     write("Data: "),
     read_line_to_codes(user_input, DataInicioCodes),
     string_to_atom(DataInicioCodes, DataInicio),
-    cadastraVendaAssinatura(Cliente, TipoAss, TipoParcela, ParcelasPagas, DataInicio, Mensagem),
-    writeln(Mensagem),
+    cadastraVendaAssinatura(Cliente, TipoAss, TipoParcela, ParcelasPagas, DataInicio),
     espera,
     clear_screen,
     menuVendasAdm(Usr).
@@ -147,8 +143,7 @@ acaoMenuVendasAdm("2", Usr) :-
     read_line_to_codes(user_input, IdCodes),
     string_to_atom(IdCodes, IdStr),
     atom_number(IdStr, Id),
-    removeVendasAssinatura(Id, Mensagem),
-    writeln(Mensagem),
+    removeVendasAssinatura(Id),
     espera,
     clear_screen,
     menuVendasAdm(Usr).
@@ -208,9 +203,8 @@ acaoMenuUsuarioAdm("1", Usr) :-
 
 acaoMenuUsuarioAdm("2", Usr) :-
     writeln("Usuario: "),
-    read_line_to_codes(user_input, UsrCodes),
-    string_to_atom(UsrCodes, Usuario),
-    removeUsuario(Usuario),
+    read_line_to_string(user_input, UsuarioRemove),
+    removeUsuario(UsuarioRemove),
     espera,
     clear_screen,
     menuUsuarioAdm(Usr).
@@ -237,8 +231,7 @@ acaoMenuUsuarioListarAdm("1", Usr) :-
     menuUsuarioListarAdm(Usr).
 acaoMenuUsuarioListarAdm("2", Usr) :-
     writeln("Tipo de Usuario: "),
-    read_line_to_codes(user_input, Tipo_usr),
-    %string_to_atom(TipoCodes, Tipo_usr),
+    read_line_to_string(user_input, Tipo_usr),
     mostrarUsuariosTipo(Tipo_usr),
     espera,
     clear_screen,
@@ -275,14 +268,12 @@ acaoMenuLojaAdm("1", Usr) :-
     menuLojaAdm(Usr).
 
 acaoMenuLojaAdm("2", Usr) :-
-    writeln("Id do produto: "),
-    read_line_to_codes(user_input, IdCodes),
-    string_to_atom(IdCodes, IdStr),
-    atom_number(IdStr, Id),
-    remove_produto(Id),
+    writeln("Categoria: "),
+    read_line_to_string(user_input, Categoria),
+    listar_produtos_por_categoria(Categoria),
     espera,
     clear_screen,
-    menuLojaAdm(Usr).
+    menuLojaListarAdm(Usr).
 
 acaoMenuLojaAdm("3", Usr) :-
     menuLojaListarAdm(Usr).
@@ -360,8 +351,7 @@ acaoMenuAssAdm("1", Usr) :-
 
 acaoMenuAssAdm("2", Usr) :-
     writeln("Sigla da Assinatura a Apagar: "),
-    read_line_to_codes(user_input, SiglaCodes),
-    string_to_atom(SiglaCodes, Sigla),
+    read_line_to_string(user_input, Sigla),
     removeAssinatura(Sigla),
     espera,
     clear_screen,
@@ -715,8 +705,7 @@ acaoMenuMarcketPlaceListarProdCli("1", Usr) :-
 
 acaoMenuMarcketPlaceListarProdCli("2", Usr) :-
     writeln("Categoria: "),
-    read_line_to_codes(user_input, CategoriaCodes),
-    string_to_atom(CategoriaCodes, Categoria),
+    read_line_to_string(user_input, Categoria),
     listar_produtos_por_categoria(Categoria),
     espera,
     clear_screen,
