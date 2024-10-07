@@ -1,1 +1,2 @@
-:- dynamic(aulaCli/2).
+:- dynamic(avaliacaoId/1).
+avaliacaoId(1).

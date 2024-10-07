@@ -1,6 +1,6 @@
 :- module(loja, [cadastroProduto/4, remove_produto/1, listar_produtos_por_categoria/1, listar_produtos/0]).
 ['../data/loja_db.pl'].
-:- dynamic produto/4.
+:- dynamic produto/5.
 
 cadastroProduto(Nome, Valor, Descricao, Categorias) :- 
     (Valor < 0 -> writeln("Valor Negativo Invalido!")
