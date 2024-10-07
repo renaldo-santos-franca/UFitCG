@@ -448,7 +448,8 @@ menuAvaliacaoPer(Usr) :-
 acaoMenuAvaliacaoPer("1", Usr) :-
     writeln("Cliente: "),
     read_line_to_codes(user_input, ClienteCodes),
-    string_to_atom(ClienteCodes, Cliente),
+    string_to_atom(ClienteCodes, Clienteatom),
+    atom_string(Clienteatom, Cliente),
     writeln("Avaliação: "),
     read_line_to_codes(user_input, AvaliacaoCodes),
     string_to_atom(AvaliacaoCodes, Avaliacao),
