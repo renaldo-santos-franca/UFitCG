@@ -49,7 +49,7 @@ valor_compra(UsrCli, Total) :-
     sum_list(Valores, Total).
 
 finaliza_compra(UsrCli, Resultado) :-
-    findall(Nome, (carrinho(UsrCli, IdProd), pega_nome Produto(IdProd, Nome)), NomesProdutos),
+    findall(Nome, (carrinho(UsrCli, IdProd), pega_nome_Produto(IdProd, Nome)), NomesProdutos),
     atomic_list_concat(NomesProdutos, ', ', TodosProd),
     ( TodosProd == '' ->
         Resultado = 'Carrinho Vazio!'
@@ -87,7 +87,7 @@ pega_valor_produto(IdProd, Valor) :-
     ; Valor = 0
     ).
 
-pega_nome Produto(IdProd, Nome) :-
+pega_nome_Produto(IdProd, Nome) :-
     ( produto(IdProd, Nome, _, _, _) ->
         true
     ; Nome = 'Produto Não Encontrado'
