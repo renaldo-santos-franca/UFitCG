@@ -703,7 +703,7 @@ menuMarcketPlaceListarProdCli(Usr) :-
     acaoMenuMarcketPlaceListarProdCli(ComandoStr, Usr).
 
 acaoMenuMarcketPlaceListarProdCli("1", Usr) :-
-    listaProdutos,
+    listar_produtos,
     espera,
     clear_screen,
     menuMarcketPlaceListarProdCli(Usr).
@@ -712,7 +712,7 @@ acaoMenuMarcketPlaceListarProdCli("2", Usr) :-
     writeln("Categoria: "),
     read_line_to_codes(user_input, CategoriaCodes),
     string_to_atom(CategoriaCodes, Categoria),
-    listarProdutosPorCategoria(Categoria),
+    listar_produtos_por_categoria(Categoria),
     espera,
     clear_screen,
     menuMarcketPlaceListarProdCli(Usr).

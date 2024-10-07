@@ -14,7 +14,7 @@ cadastraAula(Materia, Usr_per, Data_horario, Limite) :-
     ).
 
 pegaIdAula(Id) :-
-    %reconsult('data/aula_db.pl'),
+    reconsult('data/aula_db.pl'),
     id_aula(Id).
 
 insertAula(Materia, Usr_per, Data_horario, Limite) :-
@@ -30,7 +30,7 @@ verificaId(Id) :-
     aula(Id, _, _, _, _).
 
 incrementa_id_aula :-
-    %reconsult('data/aula_db.pl'),
+    reconsult('data/aula_db.pl'),
     id_aula(IdAtual),
     retract(id_aula(IdAtual)),
     NovoId is IdAtual + 1,
