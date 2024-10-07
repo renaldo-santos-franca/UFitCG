@@ -1,5 +1,6 @@
 :- module(aulaExtra, [cadastraAula/4, listarAulas/0, listarAulasPersonal/1, removeAula/1, verificaId/1, pegaInfoAula/4]).
 :- use_module(usuario, [verfivaPersonal/1]).
+:- use_module(aulaCliente, [cancelarAulas/1]).
 :- ['data/aula_db.pl'].
 :- dynamic aula/5.
 :- dynamic usuario/7.
@@ -71,6 +72,7 @@ removeAula(Id_str) :-
     atom_number(Id_str, Id),
     (verificaId(Id) -> 
         retract(aula(Id, Materia, Usr_per, Data_horario, Limite)),
+        (cancelarAulas(Id) -> true; true),
         writeln('Aula removida com sucesso!'),
         atualizar_arquivo_aula_db
     ; writeln("ID Invalido")

@@ -1,4 +1,5 @@
-:- module(aulaCliente, [adicionarAulaExtra/2, cancelarAula/2, listarAulasCliente/1]).
+:- module(aulaCliente, [adicionarAulaExtra/2, cancelarAula/2, listarAulasCliente/1, cancelarAulas/1]).
+:- ['data/aulas_cliente_db.pl'].
 :- ['aulaExtra.pl'].
 :- dynamic aulaCliente/2.
 
@@ -9,7 +10,7 @@ adicionarAulaExtra(Usr, Id) :-
     ).
 
 verificaUsrAula(Usr, Id) :-
-    consult('data/aulas_cliente_db.pl'),
+    reconsult('data/aulas_cliente_db.pl'),
     aulaCli(Usr, Id).
 
 insertClienteAula(Usr, Id) :-
@@ -17,6 +18,15 @@ insertClienteAula(Usr, Id) :-
     open('data/aulas_cliente_db.pl', append, Stream),
     format(Stream, 'aulaCli("~w", ~w).~n', [Usr, Id]),
     close(Stream).
+
+
+
+cancelarAulas(Id) :-
+    consult('data/aulas_cliente_db.pl'),
+    retract(aulaCli(_, Id)),
+    atualizar_arquivo_aula_db.
+
+
 
 cancelarAula(Usr, Id) :-
     (verificaUsrAula(Usr, Id) -> deleteAula(Usr, Id), writeln("Aula Cancelada")
@@ -35,7 +45,7 @@ atualizar_arquivo_aula_db :-
     close(Stream).
 
 listarAulasCliente(Usr) :-
-    consult('data/aulas_cliente_db.pl'),
+    reconsult('data/aulas_cliente_db.pl'),
     findall(aulaCli(Usr, Id), aulaCli(Usr, Id), Aulas),
     (Aulas \= [] -> mostrarListaAulasCli(Aulas)
     ; writeln('Nenhuma Aula Cadastrada')
