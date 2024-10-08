@@ -46,12 +46,13 @@ mostrarAvaliacaoCliente(Usr) :-
     ; write('Nenhuma avaliação encontrada para o cliente!'), nl).
 
 mostrarAvaliacaoPersonal(Usr) :-
-    findall(avaliacao_fisica(_, Usr_cli, Usr, Avaliacao, Observacoes, Data_ava), avaliacao_fisica(Id, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava), Avaliacoes),
+    findall(avaliacao_fisica(Id, Usr_cli, Usr, Avaliacao, Observacoes, Data_ava), avaliacao_fisica(Id, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava), Avaliacoes),
     (Avaliacoes \= [] -> mostrarListaAvaliacoes(Avaliacoes)
     ; write('Nenhuma avaliação encontrada para o Personal!'), nl).
 
 mostrarListaAvaliacoes([]).
-mostrarListaAvaliacoes([avaliacao_fisica(_, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava) | Resto]) :-
+mostrarListaAvaliacoes([avaliacao_fisica(Id, Usr_cli, Usr_Per, Avaliacao, Observacoes, Data_ava) | Resto]) :-
+    write('Id: '), write(Id), nl,
     write('Cliente: '), write(Usr_cli), nl,
     write('Personal: '), write(Usr_Per), nl,
     write('Avaliação: '), write(Avaliacao), nl,
