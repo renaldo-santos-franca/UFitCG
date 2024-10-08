@@ -79,7 +79,6 @@ cadastraVendaAssinatura(Usr, Tipo_assinatura, Tipo_Parcela, Parcelas_Pagas, Data
     ).
 
 insertVendaAssinatura(Id, Usr, Tipo_assinatura, Tipo_Parcela, Parcelas_Pagas, Data_inicio):-
-    assertz(venda_assinatura(Id, Usr, Tipo_assinatura, Tipo_Parcela, Parcelas_Pagas, Data_inicio)),
     open('data/vendasAssinatura_db.pl', append, Stream), 
     format(Stream, 'venda_assinatura(~w, "~w", "~w", "~w", ~w, "~w").~n', [Id, Usr, Tipo_assinatura, Tipo_Parcela, Parcelas_Pagas, Data_inicio]),
     close(Stream).

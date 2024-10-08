@@ -50,7 +50,6 @@ cadastraUsuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Sa
     ).
 
 insertUser(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario):-
-    assertz(usuario(Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario)),
     open('data/usuario_db.pl', append, Stream), 
     format(Stream, 'usuario("~w", ~w, "~w", "~w", "~w", "~w", ~w).~n', [Usr, Senha, Tipo_usr, Nome, Data_nascimento, Tipo_assinatura, Salario]),
     close(Stream). 
