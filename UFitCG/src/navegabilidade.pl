@@ -112,7 +112,7 @@ acaoMenuVendasLojaAdm(_, Usr) :- menuVendasLojaAdm(Usr).
 
 menuVendasAdm(Usr) :-
     writeln("Digite O Numero Do Comando A Sua Escolha"),
-    writeln("1. Cadastrar Venda\n2. Cancelar Venda\n3. Listar Vendas\n4. Adicionar Parcela Paga\n-. Voltar"),
+    writeln("1. Cadastrar Venda\n2. Cancelar Venda\n3. Listar Vendas\n-. Voltar"),
     read_line_to_codes(user_input, ComandoCodes),
     string_to_atom(ComandoCodes, Comando),
     atom_string(Comando, ComandoStr),
@@ -149,15 +149,6 @@ acaoMenuVendasAdm("2", Usr) :-
     menuVendasAdm(Usr).
 acaoMenuVendasAdm("3", Usr) :-
     listarVendasAssinaturas,
-    espera,
-    clear_screen,
-    menuVendasAdm(Usr).
-acaoMenuVendasAdm("4", Usr) :-
-    write("Cliente: "),
-    read_line_to_codes(user_input, ClienteCodes),
-    string_to_atom(ClienteCodes, Cliente),
-    adicionarParcelaPaga(Cliente, Mensagem),
-    writeln(Mensagem),
     espera,
     clear_screen,
     menuVendasAdm(Usr).

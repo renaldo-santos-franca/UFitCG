@@ -1,4 +1,4 @@
-:- module(loja, [cadastroProduto/4, remove_produto/1, listar_produtos_por_categoria/1, listar_produtos/0]).
+:- module(loja, [cadastroProduto/4, remove_produto/1, listar_produtos_por_categoria/1, listar_produtos/0, pega_detalhes_produto/5, pega_valor_produto/2, pega_nome_Produto/2]).
 ['../data/loja_db.pl'].
 :- dynamic produto/5.
 
@@ -68,3 +68,24 @@ listar_produtos_por_categoria(Cat) :-
     findall(produto(Id, Nome, Valor, Descricao, Cat), produto(Id, Nome, Valor, Descricao, Cat), Produtos),
     (Produtos \= [] -> print_produto(Produtos)
     ; write('Nenhum produto encontrado para a categoria!'), nl).
+
+pega_detalhes_produto(IdProd, Nome, Valor, Descricao, Categorias) :-
+    ( produto(IdProd, Nome, Valor, Descricao, Categorias) ->
+        true
+    ; Nome = 'Produto Não Encontrado',
+      Valor = 0,
+      Descricao = 'N/A',
+      Categorias = 'N/A'
+    ).
+
+pega_valor_produto(IdProd, Valor) :-
+    ( produto(IdProd, _, Valor, _, _) ->
+        true
+    ; Valor = 0
+    ).
+
+pega_nome_Produto(IdProd, Nome) :-
+    ( produto(IdProd, Nome, _, _, _) ->
+        true
+    ; Nome = 'Produto Não Encontrado'
+    ).

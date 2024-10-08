@@ -1,2 +1,2 @@
-vendaId(12).
-venda_assinatura(11, "Clara", "SIL", "1", 2, "11/11/1111").
+vendaId(13).
+venda_assinatura(12, "Clara", "SIL", "A", 1, "00/00/0000").

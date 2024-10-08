@@ -1,1 +1,1 @@
-venda_id(3).
+venda_id(1).
