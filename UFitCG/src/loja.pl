@@ -11,7 +11,6 @@ cadastroProduto(Nome, Valor, Descricao, Categorias) :-
 
 insertProduto(Nome, Valor, Descricao, Categorias) :- 
     pegaId(Id),
-    assertz(produto(Id, Nome, Valor, Descricao, Categorias)),
     open('data/loja_db.pl', append, Stream),
     format(Stream, 'produto(~w, "~w", ~w, "~w", "~w").~n', [Id, Nome, Valor, Descricao, Categorias]),
     close(Stream).
@@ -49,6 +48,7 @@ atualizar_arquivo :-
     close(Stream).
 
 listar_produtos :- 
+    reconsult('data/loja_db.pl'),
     findall(produto(Id, Nome, Valor, Descricao, Categorias), produto(Id, Nome, Valor, Descricao, Categorias), Produtos),
     (Produtos \= [] -> print_produto(Produtos)
     ; write('Nenhum Produto encontrado!'), nl).

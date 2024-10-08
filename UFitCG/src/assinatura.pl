@@ -115,6 +115,7 @@ mostrarListaVendas([venda_assinatura(Id, Usr, Tipo_assinatura, Tipo_Parcela, Par
 
 atualizaBaseDeDadosAssinatura :-
     open('data/assinatura_db.pl', write, Stream),
+    format(Stream, ':- dynamic (assinatura/7).~n', {}),
     findall(assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso),
             assinatura(Sigla, Mensal, Semestral, Anual, Desconto, Aulas, Acesso), 
             Assinaturas),
